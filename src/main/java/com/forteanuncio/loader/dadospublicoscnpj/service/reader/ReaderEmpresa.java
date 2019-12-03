@@ -64,39 +64,42 @@ public class ReaderEmpresa implements Reader, Runnable {
             Empresa empresa = null;
             String line = null;
             try{
-                
+                int cont =0;
                 while((line = br.readLine()) != null){
+                    cont++;
                     empresa = (Empresa) convertToObject(line, Empresa.class);
                     String genericHeader = generatorFile.generateHeaderByObject(empresa);
                     String lineFormated = generatorFile.convertToCsvByObject(empresa);
-                    List<String> lista;
-                    
                     if(listaObjetosByHeader.get(genericHeader) == null){
-                        lista = new ArrayList<String>();
+                        List<String> lista = new ArrayList<String>();
                         lista.add(lineFormated);
                         listaObjetosByHeader.put(genericHeader,lista);
                     }else{
-                        lista = listaObjetosByHeader.get(genericHeader);
-                        if(lista.size() == batchSize){
-                            generatorFile.addFile(lista,genericHeader);
+                        if(listaObjetosByHeader.get(genericHeader).size() == batchSize){
+                            generatorFile.addFile(listaObjetosByHeader.get(genericHeader),genericHeader);
+                            listaObjetosByHeader.get(genericHeader).clear();
                             listaObjetosByHeader.remove(genericHeader);
-                            lista.clear();
                         }else{
                             listaObjetosByHeader.get(genericHeader).add(lineFormated);
                         }
                     }
+                    if(cont%5000 == 0){
+                        System.out.println("linhas percorridas "+cont);
+                    }
                 }
-
+                br.close();
+                
                 Set<String> listaGenericHeaders = listaObjetosByHeader.keySet();
                 for(String key : listaGenericHeaders){
                     generatorFile.addFile(listaObjetosByHeader.get(key),key);
-                    listaObjetosByHeader.put(key,null);
+                    listaObjetosByHeader.get(key).clear();
+                    Thread.sleep(100);
                 }
 
             }catch(Exception e){
                 e.printStackTrace();
             }
-            br.close();
+            
         } catch (IOException e1) {
             e1.printStackTrace();
         }

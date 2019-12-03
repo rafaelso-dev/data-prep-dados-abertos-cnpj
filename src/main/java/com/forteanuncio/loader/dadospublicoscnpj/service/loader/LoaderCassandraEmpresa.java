@@ -26,7 +26,8 @@ public class LoaderCassandraEmpresa implements Loader, Runnable {
 
     private boolean tempoMaximoEsperaParaCarregarExcedido;
 
-    public static Map<String, Boolean> arquivosExecutando = new HashMap<String, Boolean>() ;
+    public static Map<String, Boolean> arquivosExecutando = new HashMap<String, Boolean>();
+    public static int quantidadeThreadsExecutando = 0;
 
     @Override
     public void writerData() throws IOException, InterruptedException {
@@ -38,6 +39,8 @@ public class LoaderCassandraEmpresa implements Loader, Runnable {
     }
     
     private void percorrerDiretorio(File[] arquivos, File diretorio) {
+        maxThreadSetSizeLoader--;
+        System.out.println("QUANTIDADE DE THREADS = "+maxThreadSetSizeLoader);
         try{
             Date primeiroMomento = new Date();
             Date segundoMomento;
@@ -52,10 +55,11 @@ public class LoaderCassandraEmpresa implements Loader, Runnable {
                         if(arquivosExecutando.get(arquivo.getName()) == null){
                             arquivosExecutando.put(arquivo.getName(),true);
                             Thread t = new Thread(new ThreadGroup("LoaderCsv"), this, arquivo.getName());
-                            while(t.getThreadGroup().activeCount() >= maxThreadSetSizeLoader){
-                                Thread.sleep(500);
+                            while(quantidadeThreadsExecutando > maxThreadSetSizeLoader){
+                                Thread.sleep(200);
                             }
                             t.start();
+                            quantidadeThreadsExecutando++;
                         }else if(!arquivosExecutando.get(arquivo.getName())){
                             arquivosExecutando.remove(arquivo.getName());
                         }
@@ -91,12 +95,10 @@ public class LoaderCassandraEmpresa implements Loader, Runnable {
                     System.out.println(String.format("Arquivo principal %s apagado", arquivo.getName()));
                     System.out.println(String.format("Removendo Flag de controle do mapa %s.", arquivo.getName()));
                     LoaderCassandraEmpresa.arquivosExecutando.put(arquivo.getName(), false);
+                    quantidadeThreadsExecutando--;
                 }else{
                     System.err.println(String.format("Arquivo principal %s não foi apagado", arquivo.getName()));
                 }
-                try{
-                    Thread.currentThread().stop();
-                }catch(Exception e){}
             } else {
                 throw new IOException("Aconteceu um erro na execução do arquivo:"+arquivo.getCanonicalPath()+"\n");
             }    
