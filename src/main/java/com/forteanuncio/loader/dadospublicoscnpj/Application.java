@@ -37,8 +37,6 @@ public class Application {
 		
 		reader.reader();
 
-		Thread.sleep(35000);
-
 		loader.writerData();
 		
 		SpringApplication.exit(ac, new ExitCodeSuccessfully());

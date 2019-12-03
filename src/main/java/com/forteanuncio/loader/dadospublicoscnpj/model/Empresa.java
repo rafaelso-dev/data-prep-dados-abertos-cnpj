@@ -1,12 +1,11 @@
 package com.forteanuncio.loader.dadospublicoscnpj.model;
 
 import java.io.Serializable;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 import com.datastax.driver.core.LocalDate;
 import com.forteanuncio.loader.dadospublicoscnpj.annotation.MappedFieldFileWithColumnCassandra;
 
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.Column;
@@ -26,12 +25,7 @@ public class Empresa implements Serializable{
     
     private static final long serialVersionUID = -6634755854220896813L;
 
-    @PrimaryKeyColumn(name = "id", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
-    @MappedFieldFileWithColumnCassandra(39)
-    private UUID id;
-
-    @PrimaryKeyColumn(name = "cnpj", ordinal = 1, type = PrimaryKeyType.PARTITIONED, ordering = Ordering.ASCENDING)
-    @Indexed("idxCnpj")
+    @PrimaryKeyColumn(name = "cnpj", ordinal = 1, type = PrimaryKeyType.PARTITIONED, ordering = Ordering.DESCENDING)
     @MappedFieldFileWithColumnCassandra(1)
     private Long cnpj;
     
@@ -39,12 +33,14 @@ public class Empresa implements Serializable{
     @MappedFieldFileWithColumnCassandra(2)
     private Integer matriz;
 
-    @PrimaryKeyColumn(name = "razaoSocial", ordinal = 2, type=PrimaryKeyType.PARTITIONED, ordering = Ordering.ASCENDING)
-    @Indexed("idxRazaoSocial")
     @MappedFieldFileWithColumnCassandra(3)
+    @PrimaryKeyColumn(name = "razaoSocial", ordinal = 2, type = PrimaryKeyType.CLUSTERED)
     private String razaoSocial;
+
+    @MappedFieldFileWithColumnCassandra(39)
+    @PrimaryKeyColumn(name = "dataHoraInsercao", ordinal = 3, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
+    private LocalDateTime dataHoraInsercao;
     
-    @PrimaryKeyColumn(name = "nomeFantasia", ordinal = 3, type=PrimaryKeyType.PARTITIONED, ordering = Ordering.ASCENDING)
     @Indexed("idxNomeFantasia")
     @MappedFieldFileWithColumnCassandra(4)
     private String nomeFantasia;
@@ -204,9 +200,5 @@ public class Empresa implements Serializable{
     @Column
     @MappedFieldFileWithColumnCassandra(38)
     private LocalDate dataSituacaoEspecial;
-
-    public String getNomeFantasia(){
-        return (this.nomeFantasia != null && !(Strings.isEmpty(this.nomeFantasia))) ? this.nomeFantasia : this.razaoSocial;
-    }
 
 }
