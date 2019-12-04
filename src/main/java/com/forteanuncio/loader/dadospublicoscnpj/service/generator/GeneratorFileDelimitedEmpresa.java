@@ -30,9 +30,9 @@ public class GeneratorFileDelimitedEmpresa implements GeneratorFileDelimited {
     private String pathDirectoryWriter;
 
     @Override
-    public String addFile(List<String> lista, String genericHeader) {
+    public String addFile(List<String> lista, String genericHeader, String fileName) {
         try {
-            String fileName = Thread.currentThread().getName()+"."+UUID.randomUUID().toString();
+            fileName = fileName+"."+UUID.randomUUID().toString();
             File f = new File(pathDirectoryWriter);
             if (!f.exists()) {
                 f.mkdirs();

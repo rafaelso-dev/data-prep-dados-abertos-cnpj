@@ -6,7 +6,7 @@ import java.util.List;
 import com.forteanuncio.loader.dadospublicoscnpj.model.Empresa;
 
 public interface GeneratorFileDelimited{
-    public String addFile(List<String> lista, String genericHeader);
+    public String addFile(List<String> lista, String genericHeader, String fileName);
     public String generateHeaderByObject(Empresa emp) throws IllegalArgumentException, IllegalAccessException,
         NoSuchMethodException, SecurityException, InvocationTargetException;
     public String convertToCsvByObject(Empresa emp) throws NoSuchMethodException, SecurityException,
