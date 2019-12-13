@@ -1,4 +1,4 @@
-package com.forteanuncio.loader.dadospublicoscnpj.model;
+package com.forteanuncio.prep.dadospublicoscnpj.model;
 
 import java.io.Serializable;
 import java.util.Date;

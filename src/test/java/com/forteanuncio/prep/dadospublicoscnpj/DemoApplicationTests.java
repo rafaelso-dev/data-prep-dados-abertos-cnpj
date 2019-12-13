@@ -1,4 +1,4 @@
-package com.forteanuncio.loader.dadospublicoscnpj;
+package com.forteanuncio.prep.dadospublicoscnpj;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.forteanuncio.loader.dadospublicoscnpj.configuration;
+package com.forteanuncio.prep.dadospublicoscnpj.configuration;
 
 import org.springframework.context.annotation.Configuration;
 

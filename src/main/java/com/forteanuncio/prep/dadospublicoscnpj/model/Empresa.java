@@ -1,10 +1,10 @@
-package com.forteanuncio.loader.dadospublicoscnpj.model;
+package com.forteanuncio.prep.dadospublicoscnpj.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.datastax.driver.core.LocalDate;
-import com.forteanuncio.loader.dadospublicoscnpj.annotation.MappedFieldFileWithColumnCassandra;
+import com.forteanuncio.prep.dadospublicoscnpj.annotation.MappedFieldFileWithColumnCassandra;
 
 import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
@@ -40,6 +40,7 @@ public class Empresa implements Serializable{
     @MappedFieldFileWithColumnCassandra(39)
     @PrimaryKeyColumn(name = "dataHoraInsercao", ordinal = 3, type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
     private LocalDateTime dataHoraInsercao;
+
     
     @Indexed("idxNomeFantasia")
     @MappedFieldFileWithColumnCassandra(4)

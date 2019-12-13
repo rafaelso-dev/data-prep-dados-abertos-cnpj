@@ -1,5 +1,5 @@
  
-package com.forteanuncio.loader.dadospublicoscnpj.configuration;
+package com.forteanuncio.prep.dadospublicoscnpj.configuration;
 
 import java.util.Set;
 
@@ -18,11 +18,10 @@ import org.springframework.data.cassandra.core.convert.CassandraConverter;
 import org.springframework.data.cassandra.core.convert.MappingCassandraConverter;
 import org.springframework.data.cassandra.core.mapping.CassandraMappingContext;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
-import org.springframework.data.cassandra.core.mapping.BasicCassandraMappingContext;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 @Configuration
-@EnableCassandraRepositories(basePackages = "com.forteanuncio.loader.dadospublicocnpj")
+@EnableCassandraRepositories(basePackages = "com.forteanuncio.prep.dadospublicocnpj")
 public class CassandraConfig 
     extends AbstractCassandraConfiguration 
     {
@@ -72,7 +71,7 @@ public class CassandraConfig
 
     @Override
     public String[] getEntityBasePackages() {
-        return new String[]{"com.forteanuncio.loader.dadospublicoscnpj.model"};
+        return new String[]{"com.forteanuncio.prep.dadospublicoscnpj.model"};
     }
 
     @Override

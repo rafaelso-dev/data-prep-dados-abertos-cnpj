@@ -11,7 +11,7 @@
 	<groupId>com.forteanuncio.loader</groupId>
 	<artifactId>dados-publicos-cnpj</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Loader Dados Abertos CNPJ</name>
+	<name>Data-Prep Dados Abertos CNPJ</name>
 	<description>Aplicação para carregar dados de cnpj para base de dados do cassandra</description>
 
 	<properties>
@@ -23,13 +23,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-cassandra</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>com.datastax.cassandra</groupId>
-			<artifactId>cassandra-driver-core</artifactId>
-			<version>4.0.0</version>
-			<type>pom</type>
-		</dependency> -->
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

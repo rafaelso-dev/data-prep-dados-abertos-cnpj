@@ -1,4 +1,4 @@
-package com.forteanuncio.loader.dadospublicoscnpj.utils;
+package com.forteanuncio.prep.dadospublicoscnpj.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datastax.driver.core.LocalDate;
-import com.forteanuncio.loader.dadospublicoscnpj.annotation.MappedFieldFileWithColumnCassandra;
+import com.forteanuncio.prep.dadospublicoscnpj.annotation.MappedFieldFileWithColumnCassandra;
 
 import org.apache.logging.log4j.util.Strings;
 
