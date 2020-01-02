@@ -30,7 +30,7 @@ public class CassandraConfig
     @Autowired
     private Environment environment;
 
-    final CassandraClusterFactoryBean cluster = new CassandraClusterFactoryBean();;
+    CassandraClusterFactoryBean cluster = new CassandraClusterFactoryBean();;
 
     @Override
     protected String getKeyspaceName() {

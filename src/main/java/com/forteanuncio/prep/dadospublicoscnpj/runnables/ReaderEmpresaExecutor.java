@@ -4,21 +4,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.forteanuncio.prep.dadospublicoscnpj.model.Empresa;
-import com.forteanuncio.prep.dadospublicoscnpj.service.generator.GeneratorFileDelimitedEmpresa;
-import com.forteanuncio.prep.dadospublicoscnpj.service.reader.ReaderEmpresa;
-
-import static com.forteanuncio.prep.dadospublicoscnpj.utils.ParseValueToTypeField.convertToObject;
+import com.forteanuncio.prep.dadospublicoscnpj.reader.impl.ReaderEmpresa;
 
 public class ReaderEmpresaExecutor implements Runnable {
 
     private String pathDirectoryReader;
-
-    public ReaderEmpresaExecutor(String pathDirectoryReader) {
+    private Integer bufferSize;
+    public ReaderEmpresaExecutor(String pathDirectoryReader, int bufferSize) {
         this.pathDirectoryReader = pathDirectoryReader;
+        this.bufferSize = bufferSize;
     }
 
     @Override
@@ -28,28 +23,18 @@ public class ReaderEmpresaExecutor implements Runnable {
         
         BufferedReader br;
         try {
-            br = new BufferedReader(new FileReader(arquivo));
-            Empresa empresa = null;
+            br = new BufferedReader(new FileReader(arquivo), bufferSize);
             String line = null;
             try{
                 while((line = br.readLine()) != null){
-                    empresa = (Empresa) convertToObject(line, Empresa.class);
-                    String genericHeader = GeneratorFileDelimitedEmpresa.generateHeaderByObject(empresa);
-                    String lineFormated = GeneratorFileDelimitedEmpresa.convertToCsvByObject(empresa);
-                    if(ReaderEmpresa.listaObjetosByHeader.get(genericHeader) == null){
-                        List<String> lista = new ArrayList<String>();
-                        lista.add(lineFormated);
-                        ReaderEmpresa.listaObjetosByHeader.put(genericHeader,lista);
-                    }else{
-                        ReaderEmpresa.listaObjetosByHeader.get(genericHeader).add(lineFormated);
-                    }
+                    ReaderEmpresa.listLines.add(line);
                 }
                 br.close();
-            }catch(Exception e){
+            }catch(final Exception e){
                 e.printStackTrace();
             }
             
-        } catch (IOException e1) {
+        } catch (final IOException e1) {
             e1.printStackTrace();
         }
     }

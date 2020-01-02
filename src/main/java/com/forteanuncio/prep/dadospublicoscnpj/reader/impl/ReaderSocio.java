@@ -1,4 +1,6 @@
-package com.forteanuncio.prep.dadospublicoscnpj.service.reader;
+package com.forteanuncio.prep.dadospublicoscnpj.reader.impl;
+
+import com.forteanuncio.prep.dadospublicoscnpj.reader.Reader;
 
 import org.springframework.stereotype.Component;
 
