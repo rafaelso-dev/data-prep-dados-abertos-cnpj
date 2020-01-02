@@ -22,6 +22,7 @@ public class ReaderEmpresaExecutor implements Runnable {
         File arquivo = new File(pathDirectoryReader + Thread.currentThread().getName());
         
         BufferedReader br;
+        System.out.println("Iniciou a Thread");
         try {
             br = new BufferedReader(new FileReader(arquivo), bufferSize);
             String line = null;
@@ -33,7 +34,7 @@ public class ReaderEmpresaExecutor implements Runnable {
             }catch(final Exception e){
                 e.printStackTrace();
             }
-            
+        System.out.println("Finalizou a Thread");
         } catch (final IOException e1) {
             e1.printStackTrace();
         }

@@ -50,6 +50,7 @@ public class CsvConverter<T> {
             
             return String.join("{", meuArr);
         }catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e){
+            System.out.println("Deu erro na conversão do registro ");
             e.printStackTrace();
             return null;
         }

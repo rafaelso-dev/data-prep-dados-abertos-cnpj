@@ -20,7 +20,7 @@ public class GeneratorFileDelimitedEmpresa {
 
     public void generateFiles() {
         try{
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5000);
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
             Set<String> listaHeaders = ReaderEmpresa.mapObjetosByHeader.keySet();
             
             // need use a threadpool with 10 thread

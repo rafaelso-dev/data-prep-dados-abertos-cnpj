@@ -31,7 +31,7 @@ public class GeneratorFileDelimitedEmpresaExecutor implements Runnable {
     }
 
     private String createTableEmpresa = "CREATE TABLE dadosabertos.empresa (  cnpj bigint,  razaosocial text,  datahorainsercao timestamp,  bairro text,  capitalsocial float,  cep int,  cnaefiscal int,  codigomotivositualcadastral int,  codigomunicipio int,  codigonaturezajuridica int,  codigopais text,  complemento text,  dataexclusaosimplesnacional date,  datainicioatividade date,  dataopcaopelosimplesnacional date,  datasituacaocadastral date,  datasituacaoespecial date,  ddd1 int,  ddd2 int,  dddfax int,  desclogradouro text,  email text,  logradouro text,  matriz int,  municipio text,  nomecidadeexterior text,  nomefantasia text,  nomepais text,  numero text,  numfax int,  opcaopelomei text,  opcaopelosimplesnacional text,  porteempresa text,  qualificacaoresponsavel int,  situacaocadastral int,  situacaoespecial text,  telefone1 int,  telefone2 int,  uf text,  PRIMARY KEY (cnpj, razaosocial, datahorainsercao) ) WITH CLUSTERING ORDER BY (razaosocial ASC, datahorainsercao DESC)  AND bloom_filter_fp_chance = 0.01  AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}  AND comment = ''  AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}  AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}  AND crc_check_chance = 1.0  AND default_time_to_live = 0  AND gc_grace_seconds = 864000  AND max_index_interval = 2048  AND memtable_flush_period_in_ms = 0  AND min_index_interval = 128  AND speculative_retry = '99PERCENTILE';";
-
+    private String separatorCaracter="\\{";
     @Override
     public void run() {
         try {
@@ -50,13 +50,15 @@ public class GeneratorFileDelimitedEmpresaExecutor implements Runnable {
                     .append(")");
             Builder writer = CQLSSTableWriter.builder().forTable(createTableEmpresa).inDirectory(pathDirectoryWriter)
                     .using(insertCommand.toString())
-
                     .withBufferSizeInMB(256);
             CQLSSTableWriter cqlWriter = writer.build();
+            
             List<Object> listaCampos = new ArrayList<Object>();
+            
+            
             for (String line : conteudoArquivo) {
                 String[] fieldMapper = genericHeader.split(",");
-                String[] valueMapper = line.split("\\{");
+                String[] valueMapper = line.split(separatorCaracter);
                 for(int i = 0; i < fieldMapper.length; i++){
                     String campo = fieldMapper[i];
                     String value = valueMapper[i];

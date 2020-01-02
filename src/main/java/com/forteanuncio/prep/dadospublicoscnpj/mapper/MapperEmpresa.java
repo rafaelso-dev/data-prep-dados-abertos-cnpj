@@ -15,11 +15,13 @@ public class MapperEmpresa {
 
     public void startThreads() {
         try {
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1000);
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+            System.out.println("Criou o ThreadPool do mapper Empresa, tamanho da lista : " + ReaderEmpresa.listLines.size());
+            
             for (int i = 0; i < ReaderEmpresa.listLines.size(); i++) {
-                executor.execute(new MapperEmpresaExecutor(ReaderEmpresa.listLines.get(i)));
-                ReaderEmpresa.listLines.remove(i);
-                i--;
+                executor.execute(new MapperEmpresaExecutor(new String(ReaderEmpresa.listLines.get(i))));
+                // ReaderEmpresa.listLines.remove(i);
+                // i--;
             }
             while (executor.getActiveCount() > 0) {
                 Thread.sleep(10);

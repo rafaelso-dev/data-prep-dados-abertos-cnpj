@@ -38,6 +38,7 @@ public class ReaderEmpresa implements Reader {
                     t.start();
                 }
             }
+            Thread.sleep(1000);
             new MapperEmpresa();
         } catch (Exception e) {
             e.printStackTrace();
