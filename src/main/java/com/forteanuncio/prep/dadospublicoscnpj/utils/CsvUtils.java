@@ -21,6 +21,7 @@ public class CsvUtils<T> {
 
     public String generateHeaderByObject(Object emp) {
         try{
+            @SuppressWarnings("unchecked")
             Class<?> clazz = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
             Field[] camposDaClasse = clazz.getDeclaredFields();
             Map<Integer,String> valores = new HashMap<Integer,String>();

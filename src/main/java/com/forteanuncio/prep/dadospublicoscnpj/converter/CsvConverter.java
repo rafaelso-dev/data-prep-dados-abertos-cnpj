@@ -26,8 +26,11 @@ import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.firstUpperName
 public class CsvConverter<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(CsvConverter.class);
+    
     public String convertToCsv(Object obj) {
         try{
+           
+            @SuppressWarnings("unchecked")
             Class<?> clazz = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
             Field[] camposDaClasse = clazz.getDeclaredFields();
             Map<Integer,String> valores = new HashMap<Integer,String>();
@@ -62,6 +65,8 @@ public class CsvConverter<T> {
 
     public T convertToObject(String line) throws NoSuchMethodException, SecurityException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException, ParseException, InstantiationException {
+        
+        @SuppressWarnings("unchecked")
         Class<T> clazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         T model = clazz.newInstance();
         line = line.trim();
