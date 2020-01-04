@@ -16,6 +16,8 @@ import com.datastax.driver.core.LocalDate;
 import com.forteanuncio.prep.dadospublicoscnpj.annotation.MappedFieldFileWithColumnCassandra;
 
 import org.apache.logging.log4j.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.GET_METHOD;
 import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.SET_METHOD;
@@ -23,6 +25,7 @@ import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.firstUpperName
 
 public class CsvConverter<T> {
 
+    private static final Logger logger = LoggerFactory.getLogger(CsvConverter.class);
     public String convertToCsv(Object obj) {
         try{
             Class<?> clazz = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
@@ -50,7 +53,7 @@ public class CsvConverter<T> {
             
             return String.join("{", meuArr);
         }catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e){
-            System.out.println("Deu erro na conversão do registro ");
+            logger.error("Deu erro na conversão do registro ");
             e.printStackTrace();
             return null;
         }
@@ -61,6 +64,7 @@ public class CsvConverter<T> {
             IllegalArgumentException, InvocationTargetException, ParseException, InstantiationException {
         Class<T> clazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         T model = clazz.newInstance();
+        line = line.trim();
         String[] camposFile = line.split("\",\"");
         Field[] camposClasses = model.getClass().getDeclaredFields();
         

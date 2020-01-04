@@ -30,12 +30,10 @@ public class Application <T> {
 		//System.out.println("Encerrando conexão com o cassandra - tabelas já criadas");
 		//cassandraConnection.destroy();
 		
-		System.out.println("Inicio do processamento "+new Date());
-		
 		// Subir todos os arquivos para a memoria de uma vez na mesma lista
 		// realizar o mapeamento da lista em multiThread para o mesmo mapa
 		reader.reader();
-		Thread.sleep(30000);
+//		Thread.sleep(30000);
 		// 
 
 		//SpringApplication.exit(ac, new ExitCodeSuccessfully());

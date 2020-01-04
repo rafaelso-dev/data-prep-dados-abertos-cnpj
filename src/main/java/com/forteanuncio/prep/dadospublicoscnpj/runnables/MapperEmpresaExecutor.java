@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.forteanuncio.prep.dadospublicoscnpj.converter.CsvConverter;
+import com.forteanuncio.prep.dadospublicoscnpj.mapper.MapperEmpresa;
 import com.forteanuncio.prep.dadospublicoscnpj.model.Empresa;
-import com.forteanuncio.prep.dadospublicoscnpj.reader.impl.ReaderEmpresa;
 import com.forteanuncio.prep.dadospublicoscnpj.utils.CsvUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class MapperEmpresaExecutor implements Runnable {
@@ -18,27 +21,31 @@ public class MapperEmpresaExecutor implements Runnable {
     public MapperEmpresaExecutor(String line) {
         this.line = line;
     }
+    private static final Logger logger = LoggerFactory.getLogger(MapperEmpresaExecutor.class);
+
+    CsvConverter<Empresa> converter = new CsvConverter<Empresa>() {};
+    CsvUtils<Empresa> utils = new CsvUtils<Empresa>() {};
 
     @Override
     public void run() {
-        CsvConverter<Empresa> converter = new CsvConverter<Empresa>() {};
-        CsvUtils<Empresa> utils = new CsvUtils<Empresa>() {};
+        
+        
         Empresa empresa = null;
         try {
             empresa = (Empresa) converter.convertToObject(line);
             String genericHeader = utils.generateHeaderByObject(empresa);
             String lineFormated = converter.convertToCsv(empresa);
-            if(ReaderEmpresa.mapObjetosByHeader.get(genericHeader) == null){
+            if(MapperEmpresa.mapObjetosByHeader.get(genericHeader) == null){
                 List<String> lista = new ArrayList<String>();
                 lista.add(lineFormated);
-                ReaderEmpresa.mapObjetosByHeader.put(genericHeader,lista);
-            }else{
-                ReaderEmpresa.mapObjetosByHeader.get(genericHeader).add(lineFormated);
+                MapperEmpresa.adiciona(genericHeader, lista);
+            }else {
+                MapperEmpresa.adiciona(genericHeader, lineFormated);
             }
+            
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException | ParseException e) {
             e.printStackTrace();
         }
-        
     }
 
 }
