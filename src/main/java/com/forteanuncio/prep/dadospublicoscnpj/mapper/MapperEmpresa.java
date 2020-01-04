@@ -25,12 +25,10 @@ public class MapperEmpresa {
 
     public void startThreads() {
         try {
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
-            //logger.info("Criando ThreadPool de mapper Empresa com tamanho de 1");
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
             
             logger.info("Iniciando executor de mapeamento MapperEmpresaExecutor");
             while(ReaderEmpresa.listLines.size() > 0) {
-                ////new MapperEmpresaExecutor(removeItemLista(ReaderEmpresa.listLines, 0)).run();
                 executor.execute(new MapperEmpresaExecutor(removeItemLista(ReaderEmpresa.listLines, 0)));
             }
 

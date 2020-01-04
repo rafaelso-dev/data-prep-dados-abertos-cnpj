@@ -10,10 +10,6 @@ import com.forteanuncio.prep.dadospublicoscnpj.mapper.MapperEmpresa;
 import com.forteanuncio.prep.dadospublicoscnpj.model.Empresa;
 import com.forteanuncio.prep.dadospublicoscnpj.utils.CsvUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
 public class MapperEmpresaExecutor implements Runnable {
 
     private String line;
@@ -21,7 +17,6 @@ public class MapperEmpresaExecutor implements Runnable {
     public MapperEmpresaExecutor(String line) {
         this.line = line;
     }
-    private static final Logger logger = LoggerFactory.getLogger(MapperEmpresaExecutor.class);
 
     CsvConverter<Empresa> converter = new CsvConverter<Empresa>() {};
     CsvUtils<Empresa> utils = new CsvUtils<Empresa>() {};

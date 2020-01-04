@@ -11,15 +11,16 @@ import com.forteanuncio.prep.dadospublicoscnpj.mapper.MapperEmpresa;
 import com.forteanuncio.prep.dadospublicoscnpj.reader.Reader;
 import com.forteanuncio.prep.dadospublicoscnpj.runnables.ReaderEmpresaExecutor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ReaderEmpresa implements Reader {
 
-    //@Value("${pasta.leitura.empresas}")
-    private String pathDirectoryReader = "/media/rafael/dados/UFs/";
+    @Value("${pasta.leitura.empresas}") 
+    private String pathDirectoryReader;
 
-    public static List<String> listLines = new ArrayList<String>();
+    public static List<String> listLines = new ArrayList<String>();    
     
     @Override
     public void reader() {

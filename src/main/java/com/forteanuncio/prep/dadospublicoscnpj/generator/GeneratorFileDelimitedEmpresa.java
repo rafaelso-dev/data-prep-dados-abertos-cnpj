@@ -3,7 +3,6 @@ package com.forteanuncio.prep.dadospublicoscnpj.generator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -12,38 +11,40 @@ import com.forteanuncio.prep.dadospublicoscnpj.runnables.GeneratorFileDelimitedE
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GeneratorFileDelimitedEmpresa {
 
-    private String pathDirectoryWriter = "/media/rafael/dados/volume_cassandra/";
-    public static boolean executedThreadsGeneratorFiles = false;
-    private static Logger logger = LoggerFactory.getLogger(GeneratorFileDelimitedEmpresa.class);
-
-    
+    @Value("${pasta.escrita.empresas}")
+    private String pathDirectoryWriter;
     private ThreadPoolExecutor executor;
+    
+    private static Logger logger = LoggerFactory.getLogger(GeneratorFileDelimitedEmpresa.class);
+    private static GeneratorFileDelimitedEmpresa generator;
+    private static boolean executedThreadsGeneratorFiles = false;
 
-    private static GeneratorFileDelimitedEmpresa eu;
+    private GeneratorFileDelimitedEmpresa(){}
 
     public static int qtdRows = 0;
 
     public static GeneratorFileDelimitedEmpresa getInstance(){
-        if(eu == null){
-            eu = new GeneratorFileDelimitedEmpresa();
-            eu.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+        if(generator == null){
+            generator = new GeneratorFileDelimitedEmpresa();
+            generator.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
         }
-        return eu;
+        return generator;
     }
 
     public void sendSinalToExecuteThreads(){
         if(!executedThreadsGeneratorFiles){
             executedThreadsGeneratorFiles = !executedThreadsGeneratorFiles;
-            eu.generateFiles();
+            generator.generateFiles();
         }
     }
 
-    private GeneratorFileDelimitedEmpresa(){}
+    
 
     public void generateFiles() {
         try{
@@ -52,7 +53,7 @@ public class GeneratorFileDelimitedEmpresa {
             while(iter.hasNext()){
                 String headerArquivo = iter.next();
                 List<String> conteudoArquivo = MapperEmpresa.mapObjetosByHeader.get(headerArquivo);
-                eu.executor.execute(new GeneratorFileDelimitedEmpresaExecutor(pathDirectoryWriter,headerArquivo,conteudoArquivo));
+                generator.executor.execute(new GeneratorFileDelimitedEmpresaExecutor(pathDirectoryWriter,headerArquivo,conteudoArquivo));
                 Thread.sleep(100);
             }
             while(executor.getActiveCount() > 0){
@@ -65,7 +66,6 @@ public class GeneratorFileDelimitedEmpresa {
             logger.error(e.getMessage());
             e.printStackTrace();
         }
-
     }
 
     public synchronized static void addLine(){
