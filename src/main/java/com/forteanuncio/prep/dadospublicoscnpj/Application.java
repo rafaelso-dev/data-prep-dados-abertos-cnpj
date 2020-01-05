@@ -12,6 +12,7 @@ import com.forteanuncio.prep.dadospublicoscnpj.managers.writers.WriterManager;
 import com.forteanuncio.prep.dadospublicoscnpj.models.CNAESecundaria;
 import com.forteanuncio.prep.dadospublicoscnpj.models.Empresa;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +85,7 @@ public class Application {
 		}
 
 		System.exit(0);
+
 	}
 
 	public static synchronized void addItemTolistManaged(String item){
