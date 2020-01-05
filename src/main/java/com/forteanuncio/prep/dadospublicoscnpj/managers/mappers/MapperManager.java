@@ -15,7 +15,7 @@ public class MapperManager<T> implements Runnable{
     
     public MapperManager() { }
 
-    public ThreadPoolExecutor executors = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+    public ThreadPoolExecutor executors = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
 
     private static final Logger logger = LoggerFactory.getLogger(MapperManager.class);
     
@@ -26,18 +26,15 @@ public class MapperManager<T> implements Runnable{
             Class<?> clazz = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
             
             logger.info("Starting executor mapper");
-            while(Application.listManaged.size() > 0) {
                 
-                while(executors.getActiveCount() == 10){
-                    Thread.sleep(20);
-                }
+            while(Application.listManaged.size() > 0) {
                 executors.execute(new MapperExecutor<T>(Application.removeFirstItemFromManaged(), clazz));
             }
-
+            
             logger.info("Finishing executor mapper");
             
             while(executors.getActiveCount() > 0){
-                Thread.sleep(5);
+                Thread.sleep(50);
             }
             executors.shutdown();
         } catch (Exception e) {

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import com.forteanuncio.prep.dadospublicoscnpj.Application;
 import com.forteanuncio.prep.dadospublicoscnpj.executors.readers.ReaderExecutor;
 
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ public class ReaderManager<T> implements Runnable {
 
     private String pathDirectoryReader;
 
-    public ThreadPoolExecutor executors = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+    public ThreadPoolExecutor executors = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 
     private static final Logger logger = LoggerFactory.getLogger(ReaderManager.class);
 
@@ -42,10 +43,10 @@ public class ReaderManager<T> implements Runnable {
             }
 
             while(executors.getActiveCount() > 0){
-                Thread.sleep(5);
+                Thread.sleep(50);
             }
             executors.shutdown();
-            
+            Application.existsReaders = false;
         } catch (Exception e) {
             e.printStackTrace();
         }

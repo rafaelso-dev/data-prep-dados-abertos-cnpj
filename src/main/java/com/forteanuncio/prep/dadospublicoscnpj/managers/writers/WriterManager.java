@@ -35,25 +35,33 @@ public class WriterManager<T> implements Runnable{
             
             @SuppressWarnings("unchecked")
             Class<?> clazz = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
-
+            
             Set<String> mapas = Application.mapManaged.keySet();
             Iterator<String> iter = mapas.iterator();
             while(iter.hasNext()){
-                String headerArquivo = iter.next();
-                List<List<Object>> conteudoArquivo = Application.mapManaged.get(headerArquivo);
-                executors.execute(new WriterExecutor<T>(pathDirectoryWriter,headerArquivo,conteudoArquivo, clazz));
+                while(executors.getActiveCount() == 10){
+                    Thread.sleep(50);
+                }
+                String key = iter.next();
+                List<List<Object>> conteudoArquivo = Application.mapManaged.get(key);
+                executors.execute(new WriterExecutor<T>(pathDirectoryWriter,key,conteudoArquivo, clazz));
             }
+            
             while(executors.getActiveCount() > 0){
-                Thread.sleep(20);
+                Thread.sleep(50);
             }
             executors.shutdown();
-            
+
+            mapas = Application.mapManaged.keySet();
+            if(mapas.size() > 0 ){
+                run();
+            }
             logger.info("Finalizando Gerador de arquivos"); 
             logger.info("Total de linhas processadas até agora {}", qtdRows);
             
         }catch(Exception e){
-            logger.error(e.getMessage());
-            e.printStackTrace();
+            logger.error("Error on writer Manager. Details: {}",e.getMessage());
+            
         }
     }
 
