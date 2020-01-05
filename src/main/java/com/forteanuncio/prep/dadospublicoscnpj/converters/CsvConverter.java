@@ -1,4 +1,4 @@
-package com.forteanuncio.prep.dadospublicoscnpj.converter;
+package com.forteanuncio.prep.dadospublicoscnpj.converters;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,25 +13,36 @@ import java.util.List;
 import java.util.Map;
 
 import com.datastax.driver.core.LocalDate;
-import com.forteanuncio.prep.dadospublicoscnpj.annotation.MappedFieldFileWithColumnCassandra;
+import com.forteanuncio.prep.dadospublicoscnpj.annotations.MappedFieldFileWithColumnCassandra;
 
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.GET_METHOD;
 import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.SET_METHOD;
 import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.firstUpperNameField;
+import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.EMPTY;
 
 public class CsvConverter<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(CsvConverter.class);
     
+    public CsvConverter(){}
+
+    private Class<?> clazz;
+    
+    public CsvConverter(Class<?> clazz){
+        this.clazz = clazz;
+    }
+
     public String convertToCsv(Object obj) {
         try{
            
-            @SuppressWarnings("unchecked")
-            Class<?> clazz = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
+            if(clazz == null){
+                @SuppressWarnings("unchecked")
+                Class<?> clazzz = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
+                this.clazz = clazzz;
+            }
             Field[] camposDaClasse = clazz.getDeclaredFields();
             Map<Integer,String> valores = new HashMap<Integer,String>();
 
@@ -42,7 +53,7 @@ public class CsvConverter<T> {
                     valuePositionAnnotation = f.getAnnotation(MappedFieldFileWithColumnCassandra.class).value();
                     Method m = clazz.getDeclaredMethod(GET_METHOD+firstUpperNameField(f.getName()));
                     Object retValue = m.invoke(obj);
-                    if(retValue != null && Strings.isNotEmpty(retValue.toString())){
+                    if(retValue != null && EMPTY.equals(retValue.toString())){
                         valores.put(valuePositionAnnotation, retValue.toString());
                     }
                 }
@@ -63,12 +74,15 @@ public class CsvConverter<T> {
         
     }
 
-    public T convertToObject(String line) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+    public Object convertToObject(String line) throws NoSuchMethodException, SecurityException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException, ParseException, InstantiationException {
         
-        @SuppressWarnings("unchecked")
-        Class<T> clazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        T model = clazz.newInstance();
+        if(clazz == null){
+            @SuppressWarnings("unchecked")
+            Class<?> clazzz = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
+            this.clazz = clazzz;
+        }
+        Object model = clazz.newInstance();
         line = line.trim();
         String[] camposFile = line.split("\",\"");
         Field[] camposClasses = model.getClass().getDeclaredFields();
@@ -93,13 +107,13 @@ public class CsvConverter<T> {
 
                     switch(f.getType().getSimpleName()){
                         case "Long":
-                            if(!Strings.EMPTY.equals(camposFile[valuePositionAnnotation])){
+                            if(!EMPTY.equals(camposFile[valuePositionAnnotation])){
                                 metodoSet.invoke(model, Long.parseLong(camposFile[valuePositionAnnotation]));
                             }
                             break;
                         case "Integer":
                             String value = camposFile[valuePositionAnnotation].replaceAll("[^0-9]", "");
-                            if(!Strings.EMPTY.equals(value)){
+                            if(!EMPTY.equals(value)){
                                 metodoSet.invoke(model, Integer.parseInt(value));
                             }
                             break;
@@ -114,7 +128,7 @@ public class CsvConverter<T> {
                             }
                             break;
                         case "Float":
-                            if(!Strings.EMPTY.equals(camposFile[valuePositionAnnotation])){
+                            if(!EMPTY.equals(camposFile[valuePositionAnnotation])){
                                 metodoSet.invoke(model, Float.parseFloat(camposFile[valuePositionAnnotation]));
                             }
                             break;

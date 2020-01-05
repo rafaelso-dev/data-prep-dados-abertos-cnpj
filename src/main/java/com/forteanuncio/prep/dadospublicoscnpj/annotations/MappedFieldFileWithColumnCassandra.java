@@ -1,4 +1,4 @@
-package com.forteanuncio.prep.dadospublicoscnpj.annotation;
+package com.forteanuncio.prep.dadospublicoscnpj.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

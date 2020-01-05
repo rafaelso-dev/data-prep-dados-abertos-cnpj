@@ -1,23 +1,22 @@
-package com.forteanuncio.prep.dadospublicoscnpj.runnables;
+package com.forteanuncio.prep.dadospublicoscnpj.executors.readers;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import com.forteanuncio.prep.dadospublicoscnpj.Application;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import com.forteanuncio.prep.dadospublicoscnpj.reader.impl.ReaderEmpresa;
-
-public class ReaderEmpresaExecutor implements Runnable {
+public class ReaderExecutor<T> implements Runnable {
 
     private String pathDirectoryReader;
     private Integer bufferSize;
 
-    private static final Logger logger = LoggerFactory.getLogger(ReaderEmpresaExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReaderExecutor.class);
 
-    public ReaderEmpresaExecutor(String pathDirectoryReader, int bufferSize) {
+    public ReaderExecutor(String pathDirectoryReader, int bufferSize) {
         this.pathDirectoryReader = pathDirectoryReader;
         this.bufferSize = bufferSize;
     }
@@ -26,18 +25,19 @@ public class ReaderEmpresaExecutor implements Runnable {
     public void run() {
         
         File arquivo = new File(pathDirectoryReader);
-        
+        int conuter =0;
         BufferedReader br;
-        logger.info("Subindo arquivo {} para a memória",arquivo.getName());
+        logger.info("Loading file {} to memory",arquivo.getName());
         try {
             br = new BufferedReader(new FileReader(arquivo), bufferSize);
             String line = null;
             try{
                 while((line = br.readLine()) != null){
-                    ReaderEmpresa.listLines.add(line);
+                    Application.addItemTolistManaged(line);                    
+                    conuter++;
                 }
                 br.close();
-                logger.info("Arquivo {} foi carregado na memória. Total de itens:  {}.",arquivo.getName(),ReaderEmpresa.listLines.size());
+                logger.info("File {} loaded on memory. Total items: {}.",arquivo.getName(), conuter);
             }catch(final Exception e){
                 e.printStackTrace();
             }
