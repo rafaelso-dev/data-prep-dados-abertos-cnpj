@@ -27,8 +27,6 @@ public class CsvConverter<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(CsvConverter.class);
     
-    public CsvConverter(){}
-
     private Class<?> clazz;
     
     public CsvConverter(Class<?> clazz){
@@ -38,11 +36,6 @@ public class CsvConverter<T> {
     public String convertToCsv(Object obj) {
         try{
            
-            if(clazz == null){
-                @SuppressWarnings("unchecked")
-                Class<?> clazzz = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
-                this.clazz = clazzz;
-            }
             Field[] camposDaClasse = clazz.getDeclaredFields();
             Map<Integer,String> valores = new HashMap<Integer,String>();
 

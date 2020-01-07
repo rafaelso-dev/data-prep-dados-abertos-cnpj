@@ -16,42 +16,49 @@ import org.slf4j.LoggerFactory;
 public class MapperExecutor<T> implements Runnable {
 
     private String line;
-    private Class<?> clazz;
-
+    
     private static final Logger logger = LoggerFactory.getLogger(MapperExecutor.class);
     
-    CsvConverter<T> csvConverter;
-    CsvUtils<T> csvUtils;
-    SSTableConverter<T> ssTableConverter;
+    CsvConverter<?> csvConverter;
+    CsvUtils<?> csvUtils;
+    SSTableConverter<?> ssTableConverter;
 
-    public MapperExecutor(String line, Class<?> clazz) {
+    public MapperExecutor(String line, CsvConverter<?> csvConverter, CsvUtils<?> csvUtils, SSTableConverter<?> ssTableConverter) {
         this.line = line;
-        this.clazz = clazz;
+        this.csvConverter = csvConverter;
+        this.csvUtils = csvUtils;
+        this.ssTableConverter = ssTableConverter;
     }
 
     @Override
     public void run() {
-        
+        logger.debug("Starting Mapper Executor.");
         Object object = null;
         try {
-            csvConverter = new CsvConverter<T>(clazz) {};
-            csvUtils = new CsvUtils<T>(clazz) {};
-            ssTableConverter = new SSTableConverter<T>(){};
-
             object = csvConverter.convertToObject(line);
-            String genericHeader = csvUtils.generateHeaderByObject(object);
-            List<Object> lineList = ssTableConverter.convertLineToListObjectTypes(object, genericHeader);
+            String key = csvUtils.generateKeyByObject(object);
+            
+            if(Application.listKeysBlocked.contains(key)){
+                Application.addItemOnListLinesManaged(line);
+            }else{
+                List<Object> listColumnsLine = ssTableConverter.convertLineToListObjectTypes(object, key);
 
-            if(Application.mapManaged.get(genericHeader) == null){
-                List<List<Object>> list = new ArrayList<List<Object>>();
-                list.add(lineList);
-                Application.addListWithKeyOnMapManaged(genericHeader, list);
-            }else {
-                Application.addItemOnListWitKeyOnMapManaged(genericHeader, lineList);
+                if(Application.mapManaged.get(key) == null){
+                    List<List<Object>> list = new ArrayList<List<Object>>();
+                    list.add(listColumnsLine);
+                    Application.addListWithKeyOnMapManaged(key, list);
+                }else {
+                    Application.addItemOnListWitKeyOnMapManaged(key, listColumnsLine);
+                }
+                if(Application.mapManaged.get(key).size() >= 100000){
+                    Application.addKeyOnListKeysBlocked(key);
+                }
             }
+
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException | ParseException e) {
             logger.error("Error on conversion. Details : {}", e.getMessage());
         }
+        logger.debug("Finishing Mapper Executor.");
     }
 
 }

@@ -21,7 +21,7 @@ public class CsvUtils<T> {
         this.clazz = clazz;
     }
 
-    public String generateHeaderByObject(Object emp) {
+    public String generateKeyByObject(Object emp) {
         try{
 
             if(clazz == null){

@@ -11,11 +11,11 @@ import com.forteanuncio.prep.dadospublicoscnpj.executors.readers.ReaderExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReaderManager<T> implements Runnable {
+public class ReaderManager implements Runnable {
 
     private String pathDirectoryReader;
 
-    public ThreadPoolExecutor executors = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+    public ThreadPoolExecutor executors = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
     private static final Logger logger = LoggerFactory.getLogger(ReaderManager.class);
 
@@ -25,12 +25,13 @@ public class ReaderManager<T> implements Runnable {
     
     @Override
     public void run() {
-        logger.info("Initializing ReaderManager");
+        logger.info("Starting ReaderManager");
         File path = new File(pathDirectoryReader);
         try {
 
             if (!path.exists() || !path.isDirectory()) {
-                throw new IOException(String.format("The target specified '{}' is not a directory", pathDirectoryReader));
+                logger.error("The target specified to reader files: {} is not a directory", pathDirectoryReader);
+                throw new IOException();
             }
 
             File[] arquivos = path.listFiles();
@@ -39,7 +40,7 @@ public class ReaderManager<T> implements Runnable {
             int bufferSize = 104857600;
             
             for (File arquivo : arquivos) {
-                executors.execute(new ReaderExecutor<T>(pathDirectoryReader+arquivo.getName(),bufferSize));
+                executors.execute(new ReaderExecutor(pathDirectoryReader+arquivo.getName(),bufferSize));
             }
 
             while(executors.getActiveCount() > 0){

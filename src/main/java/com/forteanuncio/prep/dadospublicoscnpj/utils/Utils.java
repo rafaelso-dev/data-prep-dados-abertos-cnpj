@@ -23,6 +23,7 @@ public class Utils<T> {
     public static String firstUpperNameField(Field field){
         return field.getName().substring(0,1).toUpperCase()+field.getName().substring(1);
     }
+    
     public static String firstUpperNameField(String field){
         return field.substring(0,1).toUpperCase()+field.substring(1);
     }

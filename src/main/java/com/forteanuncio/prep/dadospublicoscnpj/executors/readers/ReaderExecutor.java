@@ -9,7 +9,7 @@ import com.forteanuncio.prep.dadospublicoscnpj.Application;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-public class ReaderExecutor<T> implements Runnable {
+public class ReaderExecutor implements Runnable {
 
     private String pathDirectoryReader;
     private Integer bufferSize;
@@ -24,6 +24,7 @@ public class ReaderExecutor<T> implements Runnable {
     @Override
     public void run() {
         
+        logger.info("Starting Reader Executor.");
         File arquivo = new File(pathDirectoryReader);
         int conuter =0;
         BufferedReader br;
@@ -33,7 +34,7 @@ public class ReaderExecutor<T> implements Runnable {
             String line = null;
             try{
                 while((line = br.readLine()) != null){
-                    Application.addItemTolistManaged(line);                    
+                    Application.addItemOnListLinesManaged(line);                    
                     conuter++;
                 }
                 br.close();
@@ -44,6 +45,7 @@ public class ReaderExecutor<T> implements Runnable {
         } catch (final IOException e1) {
             e1.printStackTrace();
         }
+        logger.info("Finishing Reader Executor.");
     }
 
 }
