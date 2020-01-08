@@ -10,6 +10,7 @@ import com.forteanuncio.prep.dadospublicoscnpj.Application;
 import com.forteanuncio.prep.dadospublicoscnpj.converters.CsvConverter;
 import com.forteanuncio.prep.dadospublicoscnpj.converters.SSTableConverter;
 import com.forteanuncio.prep.dadospublicoscnpj.executors.mappers.MapperExecutor;
+import com.forteanuncio.prep.dadospublicoscnpj.managers.readers.ReaderManager;
 import com.forteanuncio.prep.dadospublicoscnpj.utils.CsvUtils;
 
 import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.isNotNullAndIsNotEmpty;
@@ -19,18 +20,21 @@ import org.slf4j.LoggerFactory;
 
 public class MapperManager<T> implements Runnable{
     
-    public MapperManager(Map<String, String> properties) {
-        this.threadPoolSize = isNotNullAndIsNotEmpty(properties.get("threadpool.size.readers.executors")) ? Integer.valueOf(properties.get("threadpool.size.readers.executors")) : 1;
-    }
-
-    public static ThreadPoolExecutor executors;
-    private int threadPoolSize;
     private static final Logger logger = LoggerFactory.getLogger(MapperManager.class);
     private static int qtdLinesMapped;
 
+    private int threadPoolSize;
     private CsvConverter<T> csvConverter;
     private CsvUtils<T> csvUtils;
     private SSTableConverter<T> ssTableConverter;
+    private int maxSizeBatch;
+
+    public static ThreadPoolExecutor executors;
+
+    public MapperManager(Map<String, String> properties) {
+        this.threadPoolSize = isNotNullAndIsNotEmpty(properties.get("threadpool.size.mappers.executors")) ? Integer.valueOf(properties.get("threadpool.size.mappers.executors")) : 1;
+        this.maxSizeBatch = isNotNullAndIsNotEmpty(properties.get("mappers.maxSizeBatchPurge")) ? Integer.valueOf(properties.get("mappers.maxSizeBatchPurge")) : 2000;
+    }
     
     @Override
     public void run() {
@@ -45,15 +49,20 @@ public class MapperManager<T> implements Runnable{
             csvUtils = new CsvUtils<T>(clazz) {};
             ssTableConverter = new SSTableConverter<T>(){};
 
-            while(Application.listLinesManaged.size() > 0 || Application.existsReaders || executors.getActiveCount() > 0) {
-                try{
+            while(ReaderManager.getLines() > 0 || 
+                Application.existsReaders || 
+                executors.getActiveCount() > 0) {
+                
+                if(ReaderManager.getLines() == 0 && ReaderManager.readersBlocked){
+                    ReaderManager.readersBlocked = false;
+                }else if(ReaderManager.getLines() > 0 && executors.getActiveCount() < threadPoolSize){
                     String line = Application.removeFirstItemFromListLinesManaged();
-                    executors.execute(new MapperExecutor<T>(line, csvConverter, csvUtils, ssTableConverter));
-                }catch(IndexOutOfBoundsException e){
-                    // logger.error("Exist Readers running but not there nothing yet on list. waiting this Thread for 500ms");
+                    executors.execute(new MapperExecutor(line, csvConverter, csvUtils, ssTableConverter, maxSizeBatch));                    
+                }else{
                     Thread.sleep(500);
                 }
             }
+
             logger.debug("Finishing Mapper manager.");
             executors.shutdown();
             Application.existsMappers = false;

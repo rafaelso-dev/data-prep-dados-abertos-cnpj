@@ -8,27 +8,30 @@ import java.util.List;
 import com.forteanuncio.prep.dadospublicoscnpj.Application;
 import com.forteanuncio.prep.dadospublicoscnpj.converters.CsvConverter;
 import com.forteanuncio.prep.dadospublicoscnpj.converters.SSTableConverter;
-import com.forteanuncio.prep.dadospublicoscnpj.managers.mappers.MapperManager;
 import com.forteanuncio.prep.dadospublicoscnpj.utils.CsvUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MapperExecutor<T> implements Runnable {
+public class MapperExecutor implements Runnable {
 
     private String line;
     
     private static final Logger logger = LoggerFactory.getLogger(MapperExecutor.class);
     
-    CsvConverter<?> csvConverter;
-    CsvUtils<?> csvUtils;
-    SSTableConverter<?> ssTableConverter;
+    private CsvConverter<?> csvConverter;
+    private CsvUtils<?> csvUtils;
+    private SSTableConverter<?> ssTableConverter;
+    private int maxSizeBatch;
 
-    public MapperExecutor(String line, CsvConverter<?> csvConverter, CsvUtils<?> csvUtils, SSTableConverter<?> ssTableConverter) {
+    public MapperExecutor(String line, CsvConverter<?> csvConverter, 
+            CsvUtils<?> csvUtils, SSTableConverter<?> ssTableConverter,
+            int maxSizeBatch) {
         this.line = line;
         this.csvConverter = csvConverter;
         this.csvUtils = csvUtils;
         this.ssTableConverter = ssTableConverter;
+        this.maxSizeBatch = maxSizeBatch;
     }
 
     @Override
@@ -51,13 +54,13 @@ public class MapperExecutor<T> implements Runnable {
                 }else {
                     Application.addItemOnListWitKeyOnMapManaged(key, listColumnsLine);
                 }
-                if(Application.mapManaged.get(key) != null && Application.mapManaged.get(key).size() >= 3000){
+                if(Application.mapManaged.get(key) != null && Application.mapManaged.get(key).size() >= maxSizeBatch){
                     Application.addKeyOnListKeysBlocked(key);
                 }
             }
             
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException | ParseException e) {
-            logger.error("Error on conversion. Details : {}", e.getMessage());
+            logger.error("Error on conversion. Details : {}, Cause: {}, StackTrace : {}", e.getMessage(), e.getCause(), e.getStackTrace());
         }
         logger.debug("Finishing Mapper Executor.");
     }

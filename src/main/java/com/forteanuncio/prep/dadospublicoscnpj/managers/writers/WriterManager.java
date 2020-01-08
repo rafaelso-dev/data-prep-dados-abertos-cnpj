@@ -15,20 +15,18 @@ import org.slf4j.LoggerFactory;
 
 public class WriterManager<T> implements Runnable{
 
+    private int threadPoolSize;
     private String pathDirectoryWriter;
 
     private static Logger logger = LoggerFactory.getLogger(WriterManager.class);
+    private static int qtdLinesWrited = 0;
 
     public static ThreadPoolExecutor executors;
     
-    private int threadPoolSize;
-
     public WriterManager(String pathDirectoryWriter, Map<String, String> properties){
         this.threadPoolSize = isNotNullAndIsNotEmpty(properties.get("threadpool.size.writers.executors")) ? Integer.valueOf(properties.get("threadpool.size.writers.executors")) : 1;
         this.pathDirectoryWriter = pathDirectoryWriter;
     }
-
-    private static int qtdLinesWrited = 0;
 
     @Override
     public void run() {
@@ -42,7 +40,7 @@ public class WriterManager<T> implements Runnable{
                 executors.getActiveCount() > 0){
                 
                 if(Application.listKeysBlocked.size() > 0){
-                    logger.debug("Iterating keys of mapManaged");
+                    logger.debug("Iterating keys blocked of mapManaged");
                     while(Application.listKeysBlocked.size() > 0){
                         if(executors.getActiveCount() < threadPoolSize){
                             try{
@@ -64,10 +62,10 @@ public class WriterManager<T> implements Runnable{
                             executors.execute(new WriterExecutor(pathDirectoryWriter, key, values));
                         }
                     }catch(Exception e){
-                        logger.error("Error on Writer Manager but still in loop. Details {}. Cause {}. Trace {}.",e.getMessage(), e.getCause(), e.getStackTrace());
+                        logger.error("Error on Writer Manager but still in loop. Details: {}. Cause: {}. Trace: {}.",e.getMessage(), e.getCause(), e.getStackTrace());
                     }
                 }else{
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                 }
             }
             executors.shutdown();

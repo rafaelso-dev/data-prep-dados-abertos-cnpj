@@ -21,15 +21,14 @@ import org.slf4j.LoggerFactory;
 
 public class Application {
 
-	public static List<String> listLinesManaged = new ArrayList<String>();
-	public static List<String> listKeysBlocked = new ArrayList<String>();
-	
-	public static ConcurrentMap<String, List<List<Object>>> mapManaged = new ConcurrentHashMap<String, List<List<Object>>>();
-
 	private static final Logger logger = LoggerFactory.getLogger(Application.class);
+	
 	public static boolean existsReaders = true;
 	public static boolean existsMappers = true;
 	public static boolean existWriters = true;
+	public static List<String> listLinesManaged = new ArrayList<String>();
+	public static List<String> listKeysBlocked = new ArrayList<String>();
+	public static ConcurrentMap<String, List<List<Object>>> mapManaged = new ConcurrentHashMap<String, List<List<Object>>>();
 	
 	public static void main(String[] args) {
 		logger.info("Initializing Application");
