@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.forteanuncio.prep.dadospublicoscnpj.agents.Monitor;
 import com.forteanuncio.prep.dadospublicoscnpj.managers.mappers.MapperManager;
 import com.forteanuncio.prep.dadospublicoscnpj.managers.readers.ReaderManager;
 import com.forteanuncio.prep.dadospublicoscnpj.managers.writers.WriterManager;
@@ -44,11 +45,11 @@ public class Application {
 			&& isNotNullAndIsNotEmpty(folderWriter = properties.get("pasta.escrita.empresas"))) {
 			
 			try {
-				ReaderManager reader = new ReaderManager(folderReader) {};
+				ReaderManager reader = new ReaderManager(folderReader, properties) {};
 				Thread readerManager = new Thread(reader);
 				readerManager.start();
 				
-				MapperManager<Empresa> mapper = new MapperManager<Empresa>() {};
+				MapperManager<Empresa> mapper = new MapperManager<Empresa>(properties) {};
 				Thread mapperManager = new Thread(mapper);
 				mapperManager.start();
 				
@@ -58,9 +59,15 @@ public class Application {
 					outputDirectory.mkdirs();
 				}
 			
-				WriterManager<Empresa> writer = new WriterManager<Empresa>(folderWriter){};
+				WriterManager<Empresa> writer = new WriterManager<Empresa>(folderWriter, properties){};
 				Thread writerManager = new Thread(writer);
 				writerManager.start();
+				
+				Thread.sleep(250);
+
+				Monitor<Empresa> monitor = new Monitor<Empresa>(properties){};
+				Thread monitorThread = new Thread(monitor);
+				monitorThread.start();
 				
 				while (existsReaders || existsMappers || existWriters) {
 					//16min e 40 segundos
@@ -75,7 +82,7 @@ public class Application {
 		}
 
 		logger.info("Application finished.");
-		System.exit(0);
+		//System.exit(0);
 
 	}
 
@@ -92,11 +99,15 @@ public class Application {
 	}
 	
     public static synchronized void addListWithKeyOnMapManaged(String key, List<List<Object>> listItems){
-        Application.mapManaged.put(key, listItems);
+		Application.mapManaged.put(key, listItems);
+		MapperManager.addQtdLinesMapped();
 	}
 	
     public static synchronized void addItemOnListWitKeyOnMapManaged(String key, List<Object> item){
-        Application.mapManaged.get(key).add(item);
+		if(Application.mapManaged.get(key) != null){
+			Application.mapManaged.get(key).add(item);
+			MapperManager.addQtdLinesMapped();
+		}
 	}
 
 	public static synchronized void addKeyOnListKeysBlocked(String key){

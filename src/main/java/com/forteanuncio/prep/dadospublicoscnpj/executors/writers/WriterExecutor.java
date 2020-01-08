@@ -18,8 +18,7 @@ public class WriterExecutor implements Runnable {
     private String key;
     List<List<Object>> values;
 
-    public WriterExecutor(String pathDirectoryWriter, String key,
-            List<List<Object>> values) {
+    public WriterExecutor(String pathDirectoryWriter, String key, List<List<Object>> values) {
         this.pathDirectoryWriter = pathDirectoryWriter;
         this.key = key;
         this.values = values;
@@ -30,47 +29,49 @@ public class WriterExecutor implements Runnable {
     @Override
     public void run() {
         logger.debug("Starting Writer Executor.");
-        int qtdLines = 0; 
-        try {
-            
-            String columnsName = key.toLowerCase();
-            StringBuilder insertCommand = new StringBuilder("INSERT INTO dadosabertos.empresa (").append(columnsName).append(") values (");
-            StringBuilder insertCommandValues = new StringBuilder("");
-            
-            String[] colunsMap = columnsName.split(",");
-            for (int i = 0; i < colunsMap.length; i++) {
-                insertCommandValues.append("?,");
+        if(this.values != null){
+            try {
+                
+                String columnsName = key.toLowerCase();
+                StringBuilder insertCommand = new StringBuilder("INSERT INTO dadosabertos.empresa (").append(columnsName).append(") values (");
+                StringBuilder insertCommandValues = new StringBuilder("");
+                
+                String[] colunsMap = columnsName.split(",");
+                for (int i = 0; i < colunsMap.length; i++) {
+                    insertCommandValues.append("?,");
+                }
+                
+                String insertCommandValuesString = insertCommandValues.toString();
+                insertCommand.append(insertCommandValuesString.substring(0,insertCommandValuesString.length() - 1)).append(")");
+                
+                logger.debug("Insert statement generated");
+
+                Builder writer = CQLSSTableWriter
+                                    .builder()
+                                    .forTable(createTable)
+                                    .inDirectory(pathDirectoryWriter)
+                                    .using(insertCommand.toString())
+                                    .withBufferSizeInMB(256);
+                
+                CQLSSTableWriter cqlWriter = writer.build();
+
+                logger.debug("cqlWriter constructed");
+                
+                
+                WriterManager.addLines(this.values.size());
+
+                while(!this.values.isEmpty()){
+                    cqlWriter.addRow(this.values.remove(0));
+                }
+                
+                logger.debug("writing file on disk with for {} lines.");
+                cqlWriter.close();
+                
+            } catch (Exception ex) {
+                logger.error("Error on writer Executer. Cause : {}. Details : {} LocalizedMessage {}. StackTrace {}.", ex.getCause(), ex.getMessage(), ex.getLocalizedMessage(), ex.getStackTrace());
             }
-            
-            String insertCommandValuesString = insertCommandValues.toString();
-            insertCommand.append(insertCommandValuesString.substring(0,insertCommandValuesString.length() - 1)).append(")");
-            
-            logger.debug("Insert statement generated");
-
-            Builder writer = CQLSSTableWriter
-                                .builder()
-                                .forTable(createTable)
-                                .inDirectory(pathDirectoryWriter)
-                                .using(insertCommand.toString())
-                                .withBufferSizeInMB(256);
-            
-            CQLSSTableWriter cqlWriter = writer.build();
-
-            logger.debug("cqlWriter constructed");
-            
-            qtdLines = this.values.size();
-            logger.debug("Adding {} lines on cqlWriter.",qtdLines);
-
-            while(!this.values.isEmpty()){
-                cqlWriter.addRow(this.values.remove(0));
-            }
-            WriterManager.addLines(qtdLines);
-            logger.debug("writing file on disk with for {} lines.");
-            cqlWriter.close();
-         } catch (Exception ex) {
-            logger.error("Error on writer Executer. Details Cause : {}. \nDetails Message: {}\nDetails Localized Message {}.\nDetails Stack Trace {}.", ex.getCause(), ex.getMessage(), ex.getLocalizedMessage(), ex.getStackTrace());
         }
-        logger.debug("Finishing Writer Executor, {} lines writed in this Thread ", qtdLines);
+        logger.debug("Finishing Writer Executor");
     }
 
 }

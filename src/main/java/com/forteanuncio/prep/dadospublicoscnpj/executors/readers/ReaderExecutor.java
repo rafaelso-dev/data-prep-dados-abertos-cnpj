@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import com.forteanuncio.prep.dadospublicoscnpj.Application;
+import com.forteanuncio.prep.dadospublicoscnpj.managers.readers.ReaderManager;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -24,28 +25,28 @@ public class ReaderExecutor implements Runnable {
     @Override
     public void run() {
         
-        logger.info("Starting Reader Executor.");
+        logger.debug("Starting Reader Executor.");
         File arquivo = new File(pathDirectoryReader);
-        int conuter =0;
+        
         BufferedReader br;
-        logger.info("Loading file {} to memory",arquivo.getName());
+        logger.debug("Loading file {} to memory",arquivo.getName());
         try {
             br = new BufferedReader(new FileReader(arquivo), bufferSize);
             String line = null;
             try{
                 while((line = br.readLine()) != null){
-                    Application.addItemOnListLinesManaged(line);                    
-                    conuter++;
+                    Application.addItemOnListLinesManaged(line);
+                    ReaderManager.addQtdLinesRead();
                 }
                 br.close();
-                logger.info("File {} loaded on memory. Total items: {}.",arquivo.getName(), conuter);
+                logger.debug("File {} loaded on memory.",arquivo.getName());
             }catch(final Exception e){
                 e.printStackTrace();
             }
         } catch (final IOException e1) {
             e1.printStackTrace();
         }
-        logger.info("Finishing Reader Executor.");
+        logger.debug("Finishing Reader Executor.");
     }
 
 }

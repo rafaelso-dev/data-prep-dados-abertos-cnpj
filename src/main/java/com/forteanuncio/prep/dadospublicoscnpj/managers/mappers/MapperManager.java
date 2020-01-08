@@ -1,5 +1,6 @@
 package com.forteanuncio.prep.dadospublicoscnpj.managers.mappers;
 
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -11,16 +12,21 @@ import com.forteanuncio.prep.dadospublicoscnpj.converters.SSTableConverter;
 import com.forteanuncio.prep.dadospublicoscnpj.executors.mappers.MapperExecutor;
 import com.forteanuncio.prep.dadospublicoscnpj.utils.CsvUtils;
 
+import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.isNotNullAndIsNotEmpty;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MapperManager<T> implements Runnable{
     
-    public MapperManager() { }
+    public MapperManager(Map<String, String> properties) {
+        this.threadPoolSize = isNotNullAndIsNotEmpty(properties.get("threadpool.size.readers.executors")) ? Integer.valueOf(properties.get("threadpool.size.readers.executors")) : 1;
+    }
 
-    public ThreadPoolExecutor executors = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);
-
+    public static ThreadPoolExecutor executors;
+    private int threadPoolSize;
     private static final Logger logger = LoggerFactory.getLogger(MapperManager.class);
+    private static int qtdLinesMapped;
 
     private CsvConverter<T> csvConverter;
     private CsvUtils<T> csvUtils;
@@ -29,7 +35,8 @@ public class MapperManager<T> implements Runnable{
     @Override
     public void run() {
         try {
-            logger.info("Starting Mapper manager.");
+            executors = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadPoolSize);
+            logger.debug("Starting Mapper manager.");
 
             @SuppressWarnings("unchecked")
             Class<?> clazz = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
@@ -43,20 +50,24 @@ public class MapperManager<T> implements Runnable{
                     String line = Application.removeFirstItemFromListLinesManaged();
                     executors.execute(new MapperExecutor<T>(line, csvConverter, csvUtils, ssTableConverter));
                 }catch(IndexOutOfBoundsException e){
-                    logger.error("Exist Readers running but not there nothing yet on list. waiting this Thread for 10ms");
-                    Thread.sleep(1000);
+                    // logger.error("Exist Readers running but not there nothing yet on list. waiting this Thread for 500ms");
+                    Thread.sleep(500);
                 }
             }
-            logger.info("Finishing Mapper manager.");
+            logger.debug("Finishing Mapper manager.");
             executors.shutdown();
-            System.out.println("Qtd of keys on map - "+Application.mapManaged.keySet().size());
             Application.existsMappers = false;
         } catch (Exception e) {
-            logger.error("Erro on Map Manager. Details {}", e.getMessage());
+            logger.error("Erro on Map Manager. Details {}, Cause : {}, Trace {}", e.getMessage(), e.getCause(), e.getStackTrace());
         }
         
     }
     
-    
+    public static synchronized void addQtdLinesMapped(){
+        qtdLinesMapped += 1;
+    }
+    public synchronized static int getLines(){
+        return qtdLinesMapped;
+    }
 
 }

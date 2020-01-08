@@ -8,6 +8,7 @@ import java.util.List;
 import com.forteanuncio.prep.dadospublicoscnpj.Application;
 import com.forteanuncio.prep.dadospublicoscnpj.converters.CsvConverter;
 import com.forteanuncio.prep.dadospublicoscnpj.converters.SSTableConverter;
+import com.forteanuncio.prep.dadospublicoscnpj.managers.mappers.MapperManager;
 import com.forteanuncio.prep.dadospublicoscnpj.utils.CsvUtils;
 
 import org.slf4j.Logger;
@@ -50,11 +51,11 @@ public class MapperExecutor<T> implements Runnable {
                 }else {
                     Application.addItemOnListWitKeyOnMapManaged(key, listColumnsLine);
                 }
-                if(Application.mapManaged.get(key).size() >= 100000){
+                if(Application.mapManaged.get(key) != null && Application.mapManaged.get(key).size() >= 3000){
                     Application.addKeyOnListKeysBlocked(key);
                 }
             }
-
+            
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException | ParseException e) {
             logger.error("Error on conversion. Details : {}", e.getMessage());
         }
