@@ -97,7 +97,7 @@ public class Application {
 				 line = Application.listLinesManaged.remove(0);
 			}
 		}catch(IndexOutOfBoundsException e){
-			logger.info("List Managed is empty. Details : {}, Cause : {}, StackTrace {}.", 
+			logger.error("List Managed is empty. Details : {}, Cause : {}, StackTrace {}.", 
 			e.getMessage(), e.getCause(), e.getStackTrace());
 		}
 		return line;

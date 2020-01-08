@@ -58,7 +58,9 @@ public class MapperManager<T> implements Runnable{
                     ReaderManager.readersBlocked = false;
                 }else if(ReaderManager.getLinesControlled() > 0 && executors.getActiveCount() < threadPoolSize){
                     String line = Application.removeFirstItemFromListLinesManaged();
-                    executors.execute(new MapperExecutor(line, csvConverter, csvUtils, ssTableConverter, maxSizeBatch));                    
+                    if(line != null){
+                        executors.execute(new MapperExecutor(line, csvConverter, csvUtils, ssTableConverter, maxSizeBatch));                    
+                    }
                 }else{
                     Thread.sleep(500);
                 }
