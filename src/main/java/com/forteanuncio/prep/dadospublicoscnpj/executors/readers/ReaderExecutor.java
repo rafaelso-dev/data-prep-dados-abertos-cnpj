@@ -36,7 +36,7 @@ public class ReaderExecutor implements Runnable {
             String line = null;
             while(br.ready()){
                 if(!ReaderManager.readersBlocked){
-                    if(ReaderManager.getLines() < maxSizeList){
+                    if(ReaderManager.getLinesControlled() < maxSizeList){
                         line = br.readLine();
                         Application.addItemOnListLinesManaged(line);
                         ReaderManager.addQtdLinesRead();

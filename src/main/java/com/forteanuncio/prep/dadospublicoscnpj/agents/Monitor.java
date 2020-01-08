@@ -34,7 +34,7 @@ public class Monitor<T> implements Runnable {
                     ReaderManager.executors.getActiveCount(),
                     MapperManager.executors.getActiveCount(),
                     WriterManager.executors.getActiveCount(),
-                    ReaderManager.getLines(),
+                    ReaderManager.getLinesTotal(),
                     MapperManager.getLines(),
                     WriterManager.getLines()
                 );

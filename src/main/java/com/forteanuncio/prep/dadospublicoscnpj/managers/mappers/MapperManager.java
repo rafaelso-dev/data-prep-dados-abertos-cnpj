@@ -49,13 +49,14 @@ public class MapperManager<T> implements Runnable{
             csvUtils = new CsvUtils<T>(clazz) {};
             ssTableConverter = new SSTableConverter<T>(){};
 
-            while(ReaderManager.getLines() > 0 || 
+            while(ReaderManager.getLinesControlled() > 0 || 
                 Application.existsReaders || 
                 executors.getActiveCount() > 0) {
                 
-                if(ReaderManager.getLines() == 0 && ReaderManager.readersBlocked){
+                if(executors.getActiveCount() == 0 && ReaderManager.readersBlocked){
+                    ReaderManager.resetQtdLinesControlled();
                     ReaderManager.readersBlocked = false;
-                }else if(ReaderManager.getLines() > 0 && executors.getActiveCount() < threadPoolSize){
+                }else if(ReaderManager.getLinesControlled() > 0 && executors.getActiveCount() < threadPoolSize){
                     String line = Application.removeFirstItemFromListLinesManaged();
                     executors.execute(new MapperExecutor(line, csvConverter, csvUtils, ssTableConverter, maxSizeBatch));                    
                 }else{

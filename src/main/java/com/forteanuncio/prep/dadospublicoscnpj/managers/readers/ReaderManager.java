@@ -22,7 +22,8 @@ public class ReaderManager implements Runnable {
     private int bufferSize;
 
     private static final Logger logger = LoggerFactory.getLogger(ReaderManager.class);
-    private static int qtdLinesRead;
+    private static int qtdLinesReadController;
+    private static int qtdLinesReadTotal;
 
     public static boolean readersBlocked;
     public static ThreadPoolExecutor executors;
@@ -67,10 +68,22 @@ public class ReaderManager implements Runnable {
     }
 
     public static synchronized void addQtdLinesRead(){
-        qtdLinesRead += 1;
+        qtdLinesReadController += 1;
+        qtdLinesReadTotal += 1;
     }
-    public synchronized static int getLines(){
-        return qtdLinesRead;
+    
+    public synchronized static int getLinesControlled(){
+        return qtdLinesReadController;
     }
+
+    public synchronized static int getLinesTotal(){
+        return qtdLinesReadTotal;
+    }
+    
+    public synchronized static void resetQtdLinesControlled(){
+        qtdLinesReadController = 0;
+    }
+
+
 
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.forteanuncio.prep.dadospublicoscnpj.agents.Monitor;
 import com.forteanuncio.prep.dadospublicoscnpj.managers.mappers.MapperManager;
@@ -26,8 +27,8 @@ public class Application {
 	public static boolean existsReaders = true;
 	public static boolean existsMappers = true;
 	public static boolean existWriters = true;
-	public static List<String> listLinesManaged = new ArrayList<String>();
-	public static List<String> listKeysBlocked = new ArrayList<String>();
+	public static List<String> listLinesManaged = new CopyOnWriteArrayList<String>();
+	public static List<String> listKeysBlocked = new CopyOnWriteArrayList<String>();
 	public static ConcurrentMap<String, List<List<Object>>> mapManaged = new ConcurrentHashMap<String, List<List<Object>>>();
 	
 	public static void main(String[] args) {
@@ -90,7 +91,16 @@ public class Application {
 	}
 
 	public static synchronized String removeFirstItemFromListLinesManaged(){
-        return Application.listLinesManaged.remove(0);
+		String line = null;
+		try{
+			if(!Application.listLinesManaged.isEmpty()){
+				 line = Application.listLinesManaged.remove(0);
+			}
+		}catch(IndexOutOfBoundsException e){
+			logger.info("List Managed is empty. Details : {}, Cause : {}, StackTrace {}.", 
+			e.getMessage(), e.getCause(), e.getStackTrace());
+		}
+		return line;
 	}
 	
     public static synchronized List<List<Object>> removeKeyFromMapManaged(String key){
