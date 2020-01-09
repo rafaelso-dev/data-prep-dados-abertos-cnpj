@@ -2,8 +2,8 @@ package com.forteanuncio.prep.dadospublicoscnpj.executors.mappers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.forteanuncio.prep.dadospublicoscnpj.Application;
 import com.forteanuncio.prep.dadospublicoscnpj.converters.CsvConverter;
@@ -48,7 +48,7 @@ public class MapperExecutor implements Runnable {
                 List<Object> listColumnsLine = ssTableConverter.convertLineToListObjectTypes(object, key);
 
                 if(Application.mapManaged.get(key) == null){
-                    List<List<Object>> list = new ArrayList<List<Object>>();
+                    List<List<Object>> list = new CopyOnWriteArrayList<List<Object>>();
                     list.add(listColumnsLine);
                     Application.addListWithKeyOnMapManaged(key, list);
                 }else {

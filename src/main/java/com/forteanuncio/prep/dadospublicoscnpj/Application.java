@@ -4,7 +4,6 @@ import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.isNotNullAndIs
 import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.loadProperties;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -82,7 +81,6 @@ public class Application {
 		}
 
 		logger.info("Application finished.");
-		//System.exit(0);
 
 	}
 

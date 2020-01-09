@@ -29,15 +29,15 @@ public class Monitor<T> implements Runnable {
                 Integer.valueOf(properties.get("time.monitor.milliseconds")) : 1000; 
         while(Application.existWriters || Application.existsMappers || Application.existsReaders){
             try{
-                logger.info("Exists {} Readers, {} Mappers and {} Writers processing. Total lines reads: {},".
-                    concat(" total lines mapped {}, and total lines writed {}."),
+                logger.info(String.format("Exists %d Readers, %d Mappers and %d Writers processing. Total lines reads: %d,".
+                    concat(" total lines mapped %d, and total lines writed %d."),
                     ReaderManager.executors.getActiveCount(),
                     MapperManager.executors.getActiveCount(),
                     WriterManager.executors.getActiveCount(),
                     ReaderManager.getLinesTotal(),
-                    MapperManager.getLines(),
+                    MapperManager.getTotalLines(),
                     WriterManager.getLines()
-                );
+                ));
                 Thread.sleep(value);
             }catch(InterruptedException e){
                 logger.error("Error on MonitorManager. Details : {}, Cause : {}. Trace : {}.", 

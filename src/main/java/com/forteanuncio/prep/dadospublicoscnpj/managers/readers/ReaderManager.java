@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import com.forteanuncio.prep.dadospublicoscnpj.Application;
 import com.forteanuncio.prep.dadospublicoscnpj.executors.readers.ReaderExecutor;
+import com.forteanuncio.prep.dadospublicoscnpj.managers.mappers.MapperManager;
 
 import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.isNotNullAndIsNotEmpty;
 
@@ -64,7 +65,7 @@ public class ReaderManager implements Runnable {
             logger.error("Error on Reader Manager. Details: {}, Cause: {}, StackTrace {}", 
                     e.getMessage(), e.getCause(), e.getStackTrace());
         }
-        logger.debug("Finish ReaderManager");
+        System.out.println("Finish ReaderManager");
     }
 
     public static synchronized void addQtdLinesRead(){
@@ -82,6 +83,8 @@ public class ReaderManager implements Runnable {
     
     public synchronized static void resetQtdLinesControlled(){
         qtdLinesReadController = 0;
+        MapperManager.resetQtdLinesMapped();
+        readersBlocked = false;
     }
 
 

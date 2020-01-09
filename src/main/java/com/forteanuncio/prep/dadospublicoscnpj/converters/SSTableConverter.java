@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class SSTableConverter<T> {
     private static final Logger logger = LoggerFactory.getLogger(CsvConverter.class);
     
     public List<Object> convertLineToListObjectTypes(Object model, String genericHeader) {
-        List<Object> columnsOfTable = new ArrayList<Object>();
+        List<Object> columnsOfTable = new CopyOnWriteArrayList<Object>();
         try{
             String[] headerColumns = genericHeader.split(",");
             for(int i=0; i < headerColumns.length; i++){

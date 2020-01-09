@@ -56,19 +56,19 @@ public class WriterExecutor implements Runnable {
                 CQLSSTableWriter cqlWriter = writer.build();
 
                 logger.debug("cqlWriter constructed");
-                
-                
-                WriterManager.addLines(this.values.size());
-
+                int tamanhoLista = this.values.size();
                 while(!this.values.isEmpty()){
                     cqlWriter.addRow(this.values.remove(0));
                 }
                 
                 logger.debug("writing file on disk with for {} lines.");
                 cqlWriter.close();
+
+                WriterManager.addLines(tamanhoLista);
                 
             } catch (Exception ex) {
-                logger.error("Error on writer Executer. Cause : {}. Details : {} LocalizedMessage {}. StackTrace {}.", ex.getCause(), ex.getMessage(), ex.getLocalizedMessage(), ex.getStackTrace());
+                logger.error("Error on writer Executer. Cause : {}. Details : {}. StackTrace {}.", 
+                    ex.getCause(), ex.getMessage(), ex.getStackTrace());
             }
         }
         logger.debug("Finishing Writer Executor");

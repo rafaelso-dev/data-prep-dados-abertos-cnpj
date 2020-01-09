@@ -1,14 +1,17 @@
 package com.forteanuncio.prep.dadospublicoscnpj.managers.writers;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import com.forteanuncio.prep.dadospublicoscnpj.Application;
 import com.forteanuncio.prep.dadospublicoscnpj.executors.writers.WriterExecutor;
+import com.forteanuncio.prep.dadospublicoscnpj.managers.mappers.MapperManager;
 
-import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.isNotNullAndIsNotEmpty;
+import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.isNotNullAndIsNotEmpty; 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +36,11 @@ public class WriterManager<T> implements Runnable{
         logger.debug("Starting Writer Manager");
         executors = (ThreadPoolExecutor) Executors.newFixedThreadPool(threadPoolSize);
         try{
-            
+            Set<String> externalKeySet = Application.mapManaged.keySet();
             while(Application.listKeysBlocked.size() > 0 || 
                 Application.mapManaged.keySet().size() > 0 || 
                 Application.existsMappers || 
+                qtdLinesWrited != MapperManager.getTotalLines() ||
                 executors.getActiveCount() > 0){
                 
                 if(Application.listKeysBlocked.size() > 0){
@@ -46,27 +50,42 @@ public class WriterManager<T> implements Runnable{
                             try{
                                 String key = Application.removeFirstItemFromListKeysBlocked();
                                 List<List<Object>> values = Application.removeKeyFromMapManaged(key);
-                                executors.execute(new WriterExecutor(pathDirectoryWriter, key, values));
+                                if(values != null){
+                                    executors.execute(new WriterExecutor(pathDirectoryWriter, key, values));
+                                }
                             }catch(IndexOutOfBoundsException e){
                                 logger.error("Error on try remove key of listKeysBlocked.");
                             }
                         }
                     }
                     
-                }else if(Application.mapManaged.keySet().size() > 0 && !Application.existsMappers && executors.getActiveCount() < threadPoolSize){
+                }
+                if(externalKeySet.size() > 0 && 
+                    !Application.existsMappers ){
                     try{
-                        for(int i=0; i < threadPoolSize-executors.getActiveCount() && Application.mapManaged.keySet().size() > 0; i++){
-                            String key = Application.mapManaged.keySet().iterator().next();
-                            List<List<Object>> values = Application.removeKeyFromMapManaged(key);
-                            logger.debug("passing {} lines to some Executor.", values.size());
-                            executors.execute(new WriterExecutor(pathDirectoryWriter, key, values));
+                        Iterator<String> iter = externalKeySet.iterator();
+                        while(iter.hasNext()){
+                            if((threadPoolSize-executors.getActiveCount()) > 0){
+                                String key = iter.next();
+                                List<List<Object>> values = Application.removeKeyFromMapManaged(key);
+                                if(values != null){
+                                    //int tam = values.size();
+                                    //addLines(tam);
+                                    //System.out.println("Lines sended to executor - "+tam + " Total = " +getLines());
+                                    //logger.debug("passing {} lines to some Executor.", tam);
+                                    executors.execute(new WriterExecutor(pathDirectoryWriter, key, values));
+                                }
+                            }
                         }
                     }catch(Exception e){
-                        logger.error("Error on Writer Manager but still in loop. Details: {}. Cause: {}. Trace: {}.",e.getMessage(), e.getCause(), e.getStackTrace());
+                        logger.error("Error on Writer Manager but still in loop. Details: {}. Cause: {}. Trace: {}.",
+                            e.getMessage(), e.getCause(), e.getStackTrace());
                     }
-                }else{
-                    Thread.sleep(500);
                 }
+
+                Thread.sleep(500);
+                externalKeySet = Application.mapManaged.keySet();
+                
             }
             executors.shutdown();
             Application.existWriters = false;
@@ -74,13 +93,14 @@ public class WriterManager<T> implements Runnable{
             logger.error("Error on writer Manager. Still out of loop, stopping application. Details {}. Cause {}. Trace {}.",e.getMessage(), e.getCause(), e.getStackTrace());
             System.exit(1);
         }
-        logger.debug("Finishing Writer Manger. Total lines processed {}", qtdLinesWrited); 
+        System.out.println("Finishing Writer Manger. Total lines processed " + getLines()); 
     }
 
-    public synchronized static void addLines(int linesWrited){
+    public static synchronized void addLines(int linesWrited){
         qtdLinesWrited += linesWrited;
     }
-    public synchronized static int getLines(){
+
+    public static synchronized int getLines(){
         return qtdLinesWrited;
     }
     
