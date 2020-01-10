@@ -44,85 +44,13 @@ public class Application {
 			&& isNotNullAndIsNotEmpty(folderWriter = properties.get("pasta.escrita.empresas"))) {
 			
 			try {
-				ReaderManager reader = new ReaderManager(folderReader, properties) {};
-				Thread readerManager = new Thread(reader);
-				readerManager.start();
-				
-				MapperManager<Empresa> mapper = new MapperManager<Empresa>(properties) {};
-				Thread mapperManager = new Thread(mapper);
-				mapperManager.start();
-				
-				File outputDirectory = new File(folderWriter);
-				if(!outputDirectory.exists()){
-					logger.info("Directory {} not exists, try creating Directory...", outputDirectory);
-					outputDirectory.mkdirs();
-				}
-			
-				WriterManager<Empresa> writer = new WriterManager<Empresa>(folderWriter, properties){};
-				Thread writerManager = new Thread(writer);
-				writerManager.start();
-				
-				Thread.sleep(250);
 
-				Monitor<Empresa> monitor = new Monitor<Empresa>(properties){};
-				Thread monitorThread = new Thread(monitor);
-				monitorThread.start();
 				
-				while (existsReaders || existsMappers || existWriters) {
-					//16min e 40 segundos
-					Thread.sleep(1000);
-				}
-				
-				logger.info("Total de arquivos gerados {}",new File(folderWriter).list().length/8);
 
-			} catch (InterruptedException e) {
-				logger.error("Error on try wait for readerExecutors finish. Details: {}", e.getMessage());
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 		}
-
-		logger.info("Application finished.");
-
 	}
-
-	public static synchronized void addItemOnListLinesManaged(String item){
-		Application.listLinesManaged.add(item);
-	}
-
-	public static synchronized String removeFirstItemFromListLinesManaged(){
-		String line = null;
-		try{
-			if(!Application.listLinesManaged.isEmpty()){
-				 line = Application.listLinesManaged.remove(0);
-			}
-		}catch(IndexOutOfBoundsException e){
-			logger.error("List Managed is empty. Details : {}, Cause : {}, StackTrace {}.", 
-			e.getMessage(), e.getCause(), e.getStackTrace());
-		}
-		return line;
-	}
-	
-    public static synchronized List<List<Object>> removeKeyFromMapManaged(String key){
-		return Application.mapManaged.remove(key);
-	}
-	
-    public static synchronized void addListWithKeyOnMapManaged(String key, List<List<Object>> listItems){
-		Application.mapManaged.put(key, listItems);
-		MapperManager.addQtdLinesMapped();
-	}
-	
-    public static synchronized void addItemOnListWitKeyOnMapManaged(String key, List<Object> item){
-		if(Application.mapManaged.get(key) != null){
-			Application.mapManaged.get(key).add(item);
-			MapperManager.addQtdLinesMapped();
-		}
-	}
-
-	public static synchronized void addKeyOnListKeysBlocked(String key){
-		Application.listKeysBlocked.add(key);
-	}
-
-	public static synchronized String removeFirstItemFromListKeysBlocked(){
-        return Application.listKeysBlocked.remove(0);
-    }
 	
 }
