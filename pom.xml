@@ -4,9 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.forteanuncio.loader</groupId>
 	<artifactId>dados-publicos-cnpj</artifactId>
-	<version>2.0-SNAPSHOT</version>
+	<version>3.0-SNAPSHOT</version>
 	<name>Data-Prep Dados Abertos CNPJ</name>
 	<description>Aplicação para carregar dados de cnpj para base de dados do cassandra</description>
+
+	<properties>
+		<graalvm.version>19.3.1</graalvm.version>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -33,10 +37,37 @@
             </exclusions>
 		</dependency>
 
+		<dependency>
+			<groupId>org.graalvm.sdk</groupId>
+			<artifactId>graal-sdk</artifactId>
+			<version>${graalvm.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
 		<plugins>
+		<!-- 	<plugin>
+				<groupId>org.graalvm.nativeimage</groupId>
+				<artifactId>native-image-maven-plugin</artifactId>
+				<version>${graalvm.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>native-image</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<skip>false</skip>
+					<imageName>dados-publicos-cnpj-2.0-SNAPSHOT</imageName>
+					<buildArgs> 
+						no-fallback 
+					 </buildArgs> 
+				</configuration>
+			</plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -61,6 +92,9 @@
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
+							<includeScope>runtime</includeScope>
+							<excludeScope>test</excludeScope>
+							
 						</configuration>
 					</execution>
 				</executions>
