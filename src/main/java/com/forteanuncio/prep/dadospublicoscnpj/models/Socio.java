@@ -1,9 +1,8 @@
 package com.forteanuncio.prep.dadospublicoscnpj.models;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.UUID;
 
+import com.datastax.driver.core.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,8 +12,6 @@ import lombok.Data;
 public class Socio implements Serializable{
     
     private static final long serialVersionUID = 911250549822685610L;
-
-    private UUID id;
 
     private Long cnpj;
 
@@ -26,7 +23,7 @@ public class Socio implements Serializable{
 
     private String codigoQualificacaoSocio;
 
-    private Date dataEntradaSociedade;
+    private LocalDate dataEntradaSociedade;
 
     private String codigoPais;
 
