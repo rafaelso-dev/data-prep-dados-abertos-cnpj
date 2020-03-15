@@ -8,23 +8,16 @@
 	<name>Data-Prep Dados Abertos CNPJ</name>
 	<description>Aplicação para carregar dados de cnpj para base de dados do cassandra</description>
 
-	<properties>
+	<!-- <properties>
 		<graalvm.version>19.3.1</graalvm.version>
-	</properties>
+	</properties> -->
 
 	<dependencies>
 		<dependency>
 			<groupId>com.datastax.cassandra</groupId>
 			<artifactId>cassandra-driver-core</artifactId>
-			<version>3.7.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.10</version>
-			<scope>provided</scope>
-		</dependency>
-		
+			<version>3.0.8</version>
+		  </dependency>
 		<dependency>
 			<groupId>org.apache.cassandra</groupId>
 			<artifactId>cassandra-all</artifactId>
@@ -33,22 +26,22 @@
                 <exclusion>
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-validator</artifactId>
-                </exclusion>
+				</exclusion>
             </exclusions>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.graalvm.sdk</groupId>
 			<artifactId>graal-sdk</artifactId>
 			<version>${graalvm.version}</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency> -->
 
 	</dependencies>
 
 	<build>
 		<plugins>
-		<!-- 	<plugin>
+		 	<!-- <plugin>
 				<groupId>org.graalvm.nativeimage</groupId>
 				<artifactId>native-image-maven-plugin</artifactId>
 				<version>${graalvm.version}</version>
@@ -62,7 +55,7 @@
 				</executions>
 				<configuration>
 					<skip>false</skip>
-					<imageName>dados-publicos-cnpj-2.0-SNAPSHOT</imageName>
+					<imageName>dados-publicos-cnpj-3.0-SNAPSHOT</imageName>
 					<buildArgs> 
 						no-fallback 
 					 </buildArgs> 
@@ -92,9 +85,8 @@
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
-							<includeScope>runtime</includeScope>
-							<excludeScope>test</excludeScope>
-							
+							<!-- <includeScope>runtime</excludeScope> -->
+							<!-- <excludeScope>test</excludeScope> -->
 						</configuration>
 					</execution>
 				</executions>

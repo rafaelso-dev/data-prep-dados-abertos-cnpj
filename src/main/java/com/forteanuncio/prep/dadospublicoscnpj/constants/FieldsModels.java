@@ -44,19 +44,22 @@ public final class FieldsModels{
     };
     public static final String[] CNAESECUNDARIA = {
         "cnpj",
-        "cnaeSecundaria"
+        "cnaeSecundaria",
+        "dataHoraInsercao"
     };
     public static final String[] SOCIO = {
         "cnpj",
-        "cpfCnpjSocio",
         "identificadorSocio",
         "nomeSocio",
+        "cpfCnpjSocio",
         "codigoQualificacaoSocio",
+        "percentualCapitalSocial",
         "dataEntradaSociedade",
         "codigoPais",
         "nomePaisSocio",
         "cpfRepresentanteLegal",
         "nomeRepresentanteLegal",
-        "codigoQualificacaoRepresentanteLegal"
+        "codigoQualificacaoRepresentanteLegal",
+        "dataHoraInsercao"
     };
 }

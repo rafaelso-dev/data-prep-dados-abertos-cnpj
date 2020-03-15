@@ -153,4 +153,77 @@ public class SSTableConverter<T> {
         return listaCampos;
     }
 
+    public static List<Object> mappingCnaesSecundariaByString(String[] values){
+        
+        List<Object> listaCampos = new ArrayList<Object>();
+        
+        // Long cnae
+        listaCampos.add(EMPTY.equals(values[0].replaceAll("[^0-9]", "")) ? null : new Long(values[0].replaceAll("[^0-9]", "")) );
+        
+        // Integer cnaeSecundaria
+        listaCampos.add(EMPTY.equals(values[1].replaceAll("[^0-9]", "")) ? null : new Integer(values[1].replaceAll("[^0-9]", "")) );
+
+        // LocalDateTime dataHoraInsercao
+        listaCampos.add(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
+                
+        return listaCampos;
+    }
+
+    public static List<Object> mappingSociosByString(String[] values){
+        List<Object> listaCampos = new ArrayList<Object>();
+        
+        // Long cnpj;
+        listaCampos.add(EMPTY.equals(values[0].replaceAll("[^0-9]", "")) ? null : new Long(values[0].replaceAll("[^0-9]", "")) );
+
+        // Integer identificadorSocio;
+        // // 1 - Pessoa Juridica
+        // // 2 - Pessoa Fisica
+        // // 3 - Estrangeiro
+        listaCampos.add(EMPTY.equals(values[1].replaceAll("[^0-9]", "")) ? null : new Integer(values[1].replaceAll("[^0-9]", "")) );
+
+        // String nomeSocio;
+        listaCampos.add(EMPTY.equals(values[2].trim()) ? "N/A" : values[2].trim() );
+
+        // String cpfCnpjSocio;
+        listaCampos.add(EMPTY.equals(values[3].trim()) ? "N/A" : values[3].trim() );
+        
+        String[] newValues = values[4].split(",");
+        
+        // String codigoQualificacaoSocio;
+        listaCampos.add(EMPTY.equals(newValues[0].substring(0, newValues[0].length()-1).trim()) ? "N/A" : newValues[0].substring(0, newValues[0].length()-1).trim() );
+
+        // Float percentualCapitalSocial;
+        listaCampos.add(EMPTY.equals(newValues[1]) ? null : new Float(newValues[1]) );
+
+        // LocalDate dataEntradaSociedade;
+        newValues[2] = newValues[2].substring(1);
+        listaCampos.add(newValues[2].length() == 8 && !newValues[2].equals(ERRORDATE) ? 
+            LocalDate.fromYearMonthDay(new Integer(newValues[2].substring(0,4)), 
+                                       new Integer(newValues[2].substring(4,6)), 
+                                       new Integer(newValues[2].substring(6,8))
+            ) : 
+            null
+        );
+
+        // String codigoPais;
+        listaCampos.add(EMPTY.equals(values[5].trim()) ? "N/A" : values[5].trim() );
+
+        // String nomePaisSocio;
+        listaCampos.add(EMPTY.equals(values[6].trim()) ? "N/A" : values[6].trim() );
+
+        // String cpfRepresentanteLegal;
+        listaCampos.add(EMPTY.equals(values[7].trim()) ? "N/A" : values[7].trim() );
+
+        // String nomeRepresentanteLegal;
+        listaCampos.add(EMPTY.equals(values[8].trim()) ? "N/A" : values[8].trim() );
+
+        // String codigoQualificacaoRepresentanteLegal;
+        listaCampos.add(EMPTY.equals(values[9].trim()) ? "N/A" : values[9].trim() );
+
+        // LocalDateTime dataHoraInsercao
+        listaCampos.add(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
+
+        return listaCampos;
+
+    }
 }

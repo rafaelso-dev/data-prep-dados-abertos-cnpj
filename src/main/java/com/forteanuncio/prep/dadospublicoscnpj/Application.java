@@ -1,29 +1,36 @@
 package com.forteanuncio.prep.dadospublicoscnpj;
 
-import com.forteanuncio.prep.dadospublicoscnpj.writers.WriterEmpresa;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.forteanuncio.prep.dadospublicoscnpj.loaders.LoaderCnaeSecundaria;
+import com.forteanuncio.prep.dadospublicoscnpj.loaders.LoaderEmpresa;
+import com.forteanuncio.prep.dadospublicoscnpj.loaders.LoaderSocio;
+import com.forteanuncio.prep.dadospublicoscnpj.utils.Timer;
 
 public class Application {
 
-	private static final Logger logger = LoggerFactory.getLogger(Application.class);
-	
 	public static void main(String[] args) {
-		logger.info("Initializing Application");
+		System.out.println("Initializing Application");
 
 		try {
-			WriterEmpresa writer = new WriterEmpresa();
-			writer.empresaByCnaeCnpjDataHoraInsercao();
-			writer.empresaByCnaeRazaoSocialCnpjDataHoraInsercao();
-			writer.empresaByUfCnaeCnpjDataHoraInsercao();
-			writer.empresaByNomeFantasiaCnpjDataHoraInsercao();
-			writer.empresaByUfMunicipioCnpjDataHoraInsercao();
+			Timer timer = new Timer();
+			timer.start();
 
+			ExecutorService executores = Executors.newFixedThreadPool(3);
+			executores.execute(new LoaderEmpresa());
+			executores.execute(new LoaderCnaeSecundaria());
+			executores.execute(new LoaderSocio());
+			executores.wait();
+			timer.end();
+			System.out.println("Tempo Decorrido" + timer.getTimeTakenSeconds());
+			
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+			System.out.println(e.getMessage());
 		}
-		logger.info("Finishing Application");
+		System.out.println("Finishing Application");
 	}
 	
+	
+
 }
