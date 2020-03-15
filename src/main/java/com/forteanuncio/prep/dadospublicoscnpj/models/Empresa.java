@@ -5,19 +5,10 @@ import java.time.LocalDateTime;
 
 import com.datastax.driver.core.LocalDate;
 
-import org.apache.cassandra.cql3.functions.JavaBasedUDFunction;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-
-@Data
-@EqualsAndHashCode
-@ToString
 public class Empresa implements Serializable{
     
     private static final long serialVersionUID = -6634755854220896813L;
-    JavaBasedUDFunction g;
+
     private Long cnpj;
     
     private Integer matriz;

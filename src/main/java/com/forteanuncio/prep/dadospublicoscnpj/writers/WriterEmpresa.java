@@ -1,76 +1,84 @@
 package com.forteanuncio.prep.dadospublicoscnpj.writers;
 
+import com.forteanuncio.prep.dadospublicoscnpj.constants.FieldsModels;
+
 import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.isNotNullAndIsNotEmpty;
-import static com.forteanuncio.prep.dadospublicoscnpj.utils.Utils.loadProperties;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Map;
 
-import com.forteanuncio.prep.dadospublicoscnpj.constants.FieldsModels;
 import com.forteanuncio.prep.dadospublicoscnpj.converters.SSTableConverter;
+
 import org.apache.cassandra.io.sstable.CQLSSTableWriter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class WriterEmpresa extends WriterDefault{
+	
+	private Map<String, String> properties;
+	private String tableName;
 
-public class WriterEmpresa{
+	@Override
+	public String getTableName(){
+		return tableName;
+	}
 	
-	private static final Logger logger = LoggerFactory.getLogger(WriterEmpresa.class);
-	
-	public void empresaByNomeFantasiaCnpjDataHoraInsercao(){
+	public WriterEmpresa(Map<String, String>  properties){
+		this.properties = properties;
+	}
+
+	public void empresaByNomeFantasiaCnpjDataHoraInsercao() throws Exception{
 		String[] fields = FieldsModels.EMPRESA;
 		String createTable = "CREATE TABLE dadosabertos.empresaByNomeFantasiaCnpjDataHoraInsercao    (cnpj bigint, razaosocial text, datahorainsercao timestamp, bairro text, capitalsocial float, cep int, cnaefiscal int, codigomotivositualcadastral int, codigomunicipio int, codigonaturezajuridica int, codigopais text, complemento text, dataexclusaosimplesnacional date, datainicioatividade date, dataopcaopelosimplesnacional date, datasituacaocadastral date, datasituacaoespecial date, ddd1 int, ddd2 int, dddfax int, desclogradouro text, email text, logradouro text, matriz int, municipio text, nomecidadeexterior text, nomefantasia text, nomepais text, numero text, numfax int, opcaopelomei text, opcaopelosimplesnacional text, porteempresa text, qualificacaoresponsavel int, situacaocadastral int, situacaoespecial text, telefone1 int, telefone2 int, uf text, PRIMARY KEY(nomefantasia, cnpj, datahorainsercao)) WITH CLUSTERING ORDER BY(cnpj ASC, datahorainsercao DESC) AND bloom_filter_fp_chance = 0.05 AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'} AND comment = '' AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'} AND compression = {'chunk_length_in_kb': '32', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'} AND crc_check_chance = 1.0 AND default_time_to_live = 0 AND gc_grace_seconds = 0 AND max_index_interval = 2048 AND memtable_flush_period_in_ms = 30000 AND min_index_interval = 128 AND speculative_retry = '99PERCENTILE';";
 		String insertCommand = "INSERT INTO dadosabertos.empresaByNomeFantasiaCnpjDataHoraInsercao ("+String.join(",", fields).toLowerCase() +") values (";
-		defaultWriter(createTable, insertCommand, "empresaByNomeFantasiaCnpjDataHoraInsercao", fields);
+		defaultWriter(createTable, insertCommand, "empresabynomefantasiacnpjdatahorainsercao", fields, "empresa");
     }
 
-	public void empresaByCnaeCnpjDataHoraInsercao(){
+	public void empresaByCnaeCnpjDataHoraInsercao() throws Exception{
 		String[] fields = FieldsModels.EMPRESA;
 		String createTable = "CREATE TABLE dadosabertos.empresaByCnaeCnpjDataHoraInsercao            (cnpj bigint, razaosocial text, datahorainsercao timestamp, bairro text, capitalsocial float, cep int, cnaefiscal int, codigomotivositualcadastral int, codigomunicipio int, codigonaturezajuridica int, codigopais text, complemento text, dataexclusaosimplesnacional date, datainicioatividade date, dataopcaopelosimplesnacional date, datasituacaocadastral date, datasituacaoespecial date, ddd1 int, ddd2 int, dddfax int, desclogradouro text, email text, logradouro text, matriz int, municipio text, nomecidadeexterior text, nomefantasia text, nomepais text, numero text, numfax int, opcaopelomei text, opcaopelosimplesnacional text, porteempresa text, qualificacaoresponsavel int, situacaocadastral int, situacaoespecial text, telefone1 int, telefone2 int, uf text, PRIMARY KEY(cnaefiscal, cnpj, datahorainsercao)) WITH CLUSTERING ORDER BY(cnpj ASC, datahorainsercao DESC) AND bloom_filter_fp_chance = 0.05 AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'} AND comment = '' AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'} AND compression = {'chunk_length_in_kb': '32', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'} AND crc_check_chance = 1.0 AND default_time_to_live = 0 AND gc_grace_seconds = 0 AND max_index_interval = 2048 AND memtable_flush_period_in_ms = 30000 AND min_index_interval = 128 AND speculative_retry = '99PERCENTILE';";
 		String insertCommand = "INSERT INTO dadosabertos.empresaByCnaeCnpjDataHoraInsercao ("+String.join(",", fields).toLowerCase() +") values (";
-		defaultWriter(createTable, insertCommand, "empresaByCnaeCnpjDataHoraInsercao", fields);
+		defaultWriter(createTable, insertCommand, "empresabycnaecnpjdatahorainsercao", fields, "empresa");
 	}
 
-	public void empresaByCnaeRazaoSocialCnpjDataHoraInsercao(){
+	public void empresaByCnaeRazaoSocialCnpjDataHoraInsercao() throws Exception{
 		String[] fields = FieldsModels.EMPRESA;
 		String createTable = "CREATE TABLE dadosabertos.empresaByCnaeRazaoSocialCnpjDataHoraInsercao (cnpj bigint, razaosocial text, datahorainsercao timestamp, bairro text, capitalsocial float, cep int, cnaefiscal int, codigomotivositualcadastral int, codigomunicipio int, codigonaturezajuridica int, codigopais text, complemento text, dataexclusaosimplesnacional date, datainicioatividade date, dataopcaopelosimplesnacional date, datasituacaocadastral date, datasituacaoespecial date, ddd1 int, ddd2 int, dddfax int, desclogradouro text, email text, logradouro text, matriz int, municipio text, nomecidadeexterior text, nomefantasia text, nomepais text, numero text, numfax int, opcaopelomei text, opcaopelosimplesnacional text, porteempresa text, qualificacaoresponsavel int, situacaocadastral int, situacaoespecial text, telefone1 int, telefone2 int, uf text, PRIMARY KEY(cnaefiscal, razaosocial, cnpj, datahorainsercao)) WITH CLUSTERING ORDER BY(razaosocial ASC, cnpj ASC, datahorainsercao DESC) AND bloom_filter_fp_chance = 0.05 AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'} AND comment = '' AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'} AND compression = {'chunk_length_in_kb': '32', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'} AND crc_check_chance = 1.0 AND default_time_to_live = 0 AND gc_grace_seconds = 0 AND max_index_interval = 2048 AND memtable_flush_period_in_ms = 30000 AND min_index_interval = 128 AND speculative_retry = '99PERCENTILE';";
 		String insertCommand = "INSERT INTO dadosabertos.empresaByCnaeRazaoSocialCnpjDataHoraInsercao ("+String.join(",", fields).toLowerCase() +") values (";
-		defaultWriter(createTable, insertCommand, "empresaByCnaeRazaoSocialCnpjDataHoraInsercao", fields);
+		defaultWriter(createTable, insertCommand, "empresabycnaerazaosocialcnpjdatahorainsercao", fields, "empresa");
 	}
 
-	public void empresaByUfMunicipioCnpjDataHoraInsercao(){
+	public void empresaByUfMunicipioCnpjDataHoraInsercao() throws Exception{
 		String[] fields = FieldsModels.EMPRESA;
 		String createTable = "CREATE TABLE dadosabertos.empresaByUfMunicipioCnpjDataHoraInsercao     (cnpj bigint, razaosocial text, datahorainsercao timestamp, bairro text, capitalsocial float, cep int, cnaefiscal int, codigomotivositualcadastral int, codigomunicipio int, codigonaturezajuridica int, codigopais text, complemento text, dataexclusaosimplesnacional date, datainicioatividade date, dataopcaopelosimplesnacional date, datasituacaocadastral date, datasituacaoespecial date, ddd1 int, ddd2 int, dddfax int, desclogradouro text, email text, logradouro text, matriz int, municipio text, nomecidadeexterior text, nomefantasia text, nomepais text, numero text, numfax int, opcaopelomei text, opcaopelosimplesnacional text, porteempresa text, qualificacaoresponsavel int, situacaocadastral int, situacaoespecial text, telefone1 int, telefone2 int, uf text, PRIMARY KEY(uf, municipio, cnpj, datahorainsercao) )WITH CLUSTERING ORDER BY(municipio ASC, cnpj ASC, datahorainsercao DESC) AND bloom_filter_fp_chance = 0.05 AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'} AND comment = '' AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'} AND compression = {'chunk_length_in_kb': '32', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'} AND crc_check_chance = 1.0 AND default_time_to_live = 0 AND gc_grace_seconds = 0 AND max_index_interval = 2048 AND memtable_flush_period_in_ms = 30000 AND min_index_interval = 128 AND speculative_retry = '99PERCENTILE';";
 		String insertCommand = "INSERT INTO dadosabertos.empresaByUfMunicipioCnpjDataHoraInsercao ("+String.join(",", fields).toLowerCase() +") values (";
-		defaultWriter(createTable, insertCommand, "empresaByUfMunicipioCnpjDataHoraInsercao", fields);
+		defaultWriter(createTable, insertCommand, "empresabyufmunicipiocnpjdatahorainsercao", fields, "empresa");
 	}
 
-	public void empresaByUfCnaeCnpjDataHoraInsercao(){
+	public void empresaByUfCnaeCnpjDataHoraInsercao() throws Exception{
 		String[] fields = FieldsModels.EMPRESA;
 		String createTable = "CREATE TABLE dadosabertos.empresaByUfCnaeCnpjDataHoraInsercao          (cnpj bigint, razaosocial text, datahorainsercao timestamp, bairro text, capitalsocial float, cep int, cnaefiscal int, codigomotivositualcadastral int, codigomunicipio int, codigonaturezajuridica int, codigopais text, complemento text, dataexclusaosimplesnacional date, datainicioatividade date, dataopcaopelosimplesnacional date, datasituacaocadastral date, datasituacaoespecial date, ddd1 int, ddd2 int, dddfax int, desclogradouro text, email text, logradouro text, matriz int, municipio text, nomecidadeexterior text, nomefantasia text, nomepais text, numero text, numfax int, opcaopelomei text, opcaopelosimplesnacional text, porteempresa text, qualificacaoresponsavel int, situacaocadastral int, situacaoespecial text, telefone1 int, telefone2 int, uf text, PRIMARY KEY(uf, cnaefiscal, cnpj, datahorainsercao) )WITH CLUSTERING ORDER BY(cnaefiscal ASC, cnpj ASC, datahorainsercao DESC) AND bloom_filter_fp_chance = 0.05 AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'} AND comment = '' AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'} AND compression = {'chunk_length_in_kb': '32', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'} AND crc_check_chance = 1.0 AND default_time_to_live = 0 AND gc_grace_seconds = 0 AND max_index_interval = 2048 AND memtable_flush_period_in_ms = 30000 AND min_index_interval = 128 AND speculative_retry = '99PERCENTILE';";
 		String insertCommand = "INSERT INTO dadosabertos.empresaByUfCnaeCnpjDataHoraInsercao ("+String.join(",", fields).toLowerCase() +") values (";
-		defaultWriter(createTable, insertCommand, "empresaByUfCnaeCnpjDataHoraInsercao", fields);
+		defaultWriter(createTable, insertCommand, "empresabyufcnaecnpjdatahorainsercao", fields, "empresa");
 	}
 
-	public void defaultWriter(String createTable, String insertCommand, String tabela, String[] fields){
+	@Override
+	public void defaultWriter(String createTable, String insertCommand, String tabela, String[] fields, String parentFolder) throws Exception{
+        this.tableName = tabela;
+
 		for(int i=0; i < fields.length; i++){
 			insertCommand+="?,";
 		}
 		insertCommand = insertCommand.substring(0, insertCommand.length()-1)+")";
 		
-		logger.info("Initializing Writer for table "+tabela);
+		System.out.println("Initializing Writer for table "+tabela);
 
-		logger.info("Loading Properties");
-		Map<String, String>  properties = loadProperties();
-		logger.info("Properties Loaded");
-		
 		String folderReader = null;
 		String folderWriter = null;
 		
-		if (isNotNullAndIsNotEmpty(folderReader = properties.get("pasta.leitura.empresas"))
-			&& isNotNullAndIsNotEmpty(folderWriter = properties.get("pasta.escrita.empresas"))) {
+		if (isNotNullAndIsNotEmpty(folderReader = properties.get("pasta.leitura."+parentFolder))
+			&& isNotNullAndIsNotEmpty(folderWriter = properties.get("pasta.escrita."+parentFolder))) {
+
 			folderWriter+=tabela;
 			new File(folderWriter).mkdirs();
 			try {
@@ -81,37 +89,23 @@ public class WriterEmpresa{
                                     .using(insertCommand.toString())
 									.withBufferSizeInMB(384)
 									.build();
-									
-				//ler a pasta
+
 				File directory = new File(folderReader);
 				for(File file : directory.listFiles()){
-					logger.info("Iniciando "+file.getName());
-					BufferedReader br;
-					
-					br = new BufferedReader(new FileReader(file), 819200);
-					// int conta=0;
+					System.out.println("Iniciando "+file.getName());
+					BufferedReader br = new BufferedReader(new FileReader(file), 819200);
 					while(br.ready()){
-						// conta++;
-						String[] arrayValues = br.readLine().split("\",\"");
-						// arrayValues[0]=arrayValues[0].replace("\"", "");
-						// arrayValues[arrayValues.length-1]=arrayValues[arrayValues.length-1].replace("\"", "");
-						// if(arrayValues.length < 38){
-						// 	logger.error("Error Parser at line : {} ", line);
-						// 	br.close();
-						// 	throw new Exception("Error of parser at line : "+line);
-						// }
-						ssTableWriter.addRow(SSTableConverter.mappingEmpresaByString(arrayValues));
+						ssTableWriter.addRow(SSTableConverter.mappingEmpresaByString(br.readLine().split("\",\"")));
 					}
-					// logger.info("qtd registros para {} : {}",file.getName(),conta);
 					br.close();
 					ssTableWriter.close();
-					logger.info("Finalizando "+file.getName());
+					System.out.println("Finalizando "+file.getName());
 				}
 			}catch(Exception e){
-				logger.error("Error on Application. Details: {}, Cause: {}, StackTrace {}", 
-								e.getMessage(), e.getCause(), e.getStackTrace());
+				System.out.println("Error on Application. Details: "+e.getMessage()+", Cause: "+e.getCause()+", StackTrace: "+e.getStackTrace());
 			}
 		}
+
 	}
 
 }
