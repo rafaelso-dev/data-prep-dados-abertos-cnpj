@@ -31,17 +31,20 @@
 		</dependency>
 
 		<!-- <dependency>
+
 			<groupId>org.graalvm.sdk</groupId>
 			<artifactId>graal-sdk</artifactId>
 			<version>${graalvm.version}</version>
 			<scope>provided</scope>
 		</dependency> -->
 
+
 	</dependencies>
 
 	<build>
 		<plugins>
 		 	<!-- <plugin>
+
 				<groupId>org.graalvm.nativeimage</groupId>
 				<artifactId>native-image-maven-plugin</artifactId>
 				<version>${graalvm.version}</version>
@@ -87,6 +90,7 @@
 							<overWriteIfNewer>true</overWriteIfNewer>
 							<!-- <includeScope>runtime</excludeScope> -->
 							<!-- <excludeScope>test</excludeScope> -->
+
 						</configuration>
 					</execution>
 				</executions>

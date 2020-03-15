@@ -30,7 +30,4 @@ public class Application {
 		}
 		System.out.println("Finishing Application");
 	}
-	
-	
-
 }

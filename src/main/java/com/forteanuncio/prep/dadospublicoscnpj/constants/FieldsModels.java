@@ -54,6 +54,7 @@ public final class FieldsModels{
         "cpfCnpjSocio",
         "codigoQualificacaoSocio",
         "percentualCapitalSocial",
+
         "dataEntradaSociedade",
         "codigoPais",
         "nomePaisSocio",

@@ -65,6 +65,7 @@ public class WriterEmpresa extends WriterDefault{
 	@Override
 	public void defaultWriter(String createTable, String insertCommand, String tabela, String[] fields, String parentFolder) throws Exception{
         this.tableName = tabela;
+
 		for(int i=0; i < fields.length; i++){
 			insertCommand+="?,";
 		}
@@ -77,6 +78,7 @@ public class WriterEmpresa extends WriterDefault{
 		
 		if (isNotNullAndIsNotEmpty(folderReader = properties.get("pasta.leitura."+parentFolder))
 			&& isNotNullAndIsNotEmpty(folderWriter = properties.get("pasta.escrita."+parentFolder))) {
+
 			folderWriter+=tabela;
 			new File(folderWriter).mkdirs();
 			try {
@@ -87,7 +89,7 @@ public class WriterEmpresa extends WriterDefault{
                                     .using(insertCommand.toString())
 									.withBufferSizeInMB(384)
 									.build();
-									
+
 				File directory = new File(folderReader);
 				for(File file : directory.listFiles()){
 					System.out.println("Iniciando "+file.getName());
@@ -103,7 +105,6 @@ public class WriterEmpresa extends WriterDefault{
 				System.out.println("Error on Application. Details: "+e.getMessage()+", Cause: "+e.getCause()+", StackTrace: "+e.getStackTrace());
 			}
 		}
-
 
 	}
 
