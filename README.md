@@ -56,7 +56,7 @@ No meu caso, `/mnt/2f5d0b56-cec8-4246-b2ce-8307eda766c3` é o caminho que faz ac
 
 >Meu ambiente está assim:
 
-![Meu Ambiente](./src/main/resources/diagrama meu cenario.jpg)
+![Meu Ambiente](./src/main/resources/diagrama.jpg)
 
 ## Iniciando o banco de dados
 Acesso a pasta que vc mapeou para arquivos de configuração: ***<pasta_arquivos_configuração>***
