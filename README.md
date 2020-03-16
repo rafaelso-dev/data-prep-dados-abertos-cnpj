@@ -91,7 +91,9 @@ java -jar target/dados-publico-cnpj-3.0-SNAPSHOT.jar
 Se preferir, e tiver conhecimento, pode rodar a aplicação em container docker também, mas o processo de mapeamento de volumes será via volume lógico do docker e não via pasta do host como fizemos.
 
 
-Quaisquer dúvidas:
+#Contato
+
+Galera quem tiver qualquer dúvida sobre o funcionamento do projeto dá um toque que eu ajudo como puder
 
 Rafael Silva Oliveira
 
