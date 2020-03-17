@@ -65,7 +65,8 @@ Acesso a pasta que vc mapeou para arquivos de configuração: ***<pasta_arquivos
 Dentro dessa pasta, insira o arquivo de cassandra-env.sh, esse arquvo está na pasta /src/main/resources do projeto devidamente alterado.
 
 No arquivo cassandra-env.sh, você focará nas linhas:  
-Linha 300: `JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname=172.17.0.2"`  troque o ip 172.17.0.2 pelo ip do seu container do cassandra.  
+Linha 300: `JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname=172.17.0.2"`  
+troque o ip 172.17.0.2 pelo ip do seu container do cassandra.  
 Linha 324: `JVM_OPTS="$JVM_OPTS -Dcassandra.jmx.remote.port=$JMX_PORT"`  
 Linha 327: `JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.rmi.port=$JMX_PORT"`  
 
