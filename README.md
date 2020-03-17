@@ -19,6 +19,8 @@ No meu caso, eu utilizei o container do docker. Segue linha de comando utilizada
 **Não execute esse comando até chegar no passo de iniciar o banco de dados, apenas deixe ele de prontidão em um terminal.**
 ``` 
 docker run \
+-e DSE_LICENSE=accept \
+-e LOCAL_JMX=no \
 -p 9042:9042 \
 -p 7199:7199 \
 -v <pasta_arquivos_configuração>/conf \
@@ -41,20 +43,19 @@ Altere os caminhos no arquivo application.properties ( )
 
 |nome da propriedade            |valor 				          |
 |-------------------------------|-----------------------------|
-|`pasta.leitura.empresas`         |`Pasta onde se encontra o arquivo de empresa.csv` no meu caso /mnt/2f5d0b56-cec8-4246-b2ce-8307eda766c3/dados_receita_federal/empresa/             
-|`pasta.escrita.empresas`         |`pasta onde os arquivos SSTables serão gerados` no meu caso é a <pasta_cassandra>/dadosabertos/        
-|`pasta.leitura.cnaes`| `Pasta onde se encontra o arquivo de cnaes.csv`no meu caso /mnt/2f5d0b56-cec8-4246-b2ce-8307eda766c3/dados_receita_federal/cnaes/|
-|`pasta.escrita.cnaes` | `Pasta onde os arquivos SSTables serão gerados` no meu caso é a <pasta_cassandra>/dadosabertos/ 
-|`pasta.leitura.socios`| `Pasta onde se encontra o arquivo de socios.csv` /mnt/2f5d0b56-cec8-4246-b2ce-8307eda766c3/dados_receita_federal/socios/
-|`pasta.escrita.socios`| `Pasta onde os arquivos SSTables serão gerados` <pasta_cassandra>/dadosabertos/
-|`pasta.container.leitura` | Preferencialmente deve ser mantido o valor já pré-setado. Mas pode ser alterado conforme necessidade
+|`pasta.leitura.empresas`       |`Pasta onde se encontra o arquivo de empresa.csv` no meu caso /mnt/2f5d0b56-cec8-4246-b2ce-8307eda766c3/dados_receita_federal/empresa/             
+|`pasta.escrita.empresas`       |`pasta onde os arquivos SSTables serão gerados` no meu caso é a <pasta_cassandra>/dadosabertos/        
+|`pasta.leitura.cnaes`          | `Pasta onde se encontra o arquivo de cnaes.csv`no meu caso /mnt/2f5d0b56-cec8-4246-b2ce-8307eda766c3/dados_receita_federal/cnaes/|
+|`pasta.escrita.cnaes`          | `Pasta onde os arquivos SSTables serão gerados` no meu caso é a <pasta_cassandra>/dadosabertos/ 
+|`pasta.leitura.socios`         | `Pasta onde se encontra o arquivo de socios.csv` /mnt/2f5d0b56-cec8-4246-b2ce-8307eda766c3/dados_receita_federal/socios/
+|`pasta.escrita.socios`         | `Pasta onde os arquivos SSTables serão gerados` <pasta_cassandra>/dadosabertos/
+|`pasta.container.leitura`      | Preferencialmente deve ser mantido o valor já pré-setado. Mas pode ser alterado conforme necessidade
 
 > **Observação importante: 
 Todos os parâmetros com prefixo `pasta.escrita` deve ter o mesmo valor do parâmetro "`<pasta_cassandra>`/dadosabertos" , pois como estou fazendo load de dados via JMX, não é possível mandar arquivos via JMX para um servidor remoto e/ou container diretamente, logo, a pasta onde estão os arquivos de SSTable deve estar mapeado para um volume, onde tanto a máquina host (onde esta aplicação está rodando) quanto o servidor remoto (banco de dados) consigam acessar.
 Eu criei um slink entre os diretórios  `/mnt/2f5d0b56-cec8-4246-b2ce-8307eda766c3/dados_receita_federal/sstables/` e o valor do parametro `<pasta_cassandra>` que corresponde ao path do container `/var/lib/cassandra/` onde dentro dessa pasta contém a pasta da keyspace que estamos usando `dadosabertos`. 
 No meu caso, `/mnt/2f5d0b56-cec8-4246-b2ce-8307eda766c3` é o caminho que faz acesso ao meu 2º HD que possuo na minha máquina.** 
-
->Meu ambiente está assim:
+Meu ambiente está assim:
 
 ![Meu Ambiente](./src/main/resources/diagrama.jpg)
 
@@ -62,6 +63,17 @@ No meu caso, `/mnt/2f5d0b56-cec8-4246-b2ce-8307eda766c3` é o caminho que faz ac
 Acesso a pasta que vc mapeou para arquivos de configuração: ***<pasta_arquivos_configuração>***
 
 Dentro dessa pasta, insira o arquivo de cassandra-env.sh, esse arquvo está na pasta /src/main/resources do projeto devidamente alterado.
+
+No arquivo cassandra-env.sh, você focará nas linhas: 
+
+Linha 300: `JVM_OPTS="$JVM_OPTS -Djava.rmi.server.hostname=172.17.0.2"` 
+troque o ip 172.17.0.2 pelo ip do seu container do cassandra.
+
+Linha 324: `JVM_OPTS="$JVM_OPTS -Dcassandra.jmx.remote.port=$JMX_PORT"`
+Linha 327: `JVM_OPTS="$JVM_OPTS -Dcom.sun.management.jmxremote.rmi.port=$JMX_PORT"`
+
+Por default elas vem comentadas, mas é necessário descomentá-las para acessar o container remotamente via JMX.
+
 A alteração realizada é para permitir conexões JMX diretamente com a instancia do cassandra.
 
 ### Crie o Keyspace e as tabelas.
